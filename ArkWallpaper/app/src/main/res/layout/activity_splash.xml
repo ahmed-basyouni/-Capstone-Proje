@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:clipToPadding="false"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/splashBg"
+        android:scaleType="centerCrop"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerInParent="true"
+        android:gravity="center">
+
+        <com.ark.android.arkwallpaper.ui.customviews.AnimatedSvgView
+            android:id="@+id/animated_logo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:oakSvgImageSizeX="199"
+            app:oakSvgImageSizeY="74"
+            android:layout_marginBottom="16dp"
+            android:contentDescription="@string/app_name" />
+
+        <ImageView android:id="@+id/logo_subtitle"
+            android:src="@drawable/logo_subtitle"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:contentDescription="@string/app_name" />
+
+    </LinearLayout>
+
+</RelativeLayout>
