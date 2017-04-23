@@ -270,7 +270,7 @@ public class AnimatedSvgView extends View {
             float phase = MathUtil.constrain(0, 1, (t - mFillStart) * 1f / mFillTime);
             for (int i = 0; i < mGlyphData.length; i++) {
                 GlyphData glyphData = mGlyphData[i];
-                mFillPaint.setARGB((int) (phase * 255), 255, 255, 255);
+                mFillPaint.setARGB((int) (phase * 255), 37, 152, 219);
                 canvas.drawPath(glyphData.path, mFillPaint);
             }
         }

@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#009688</color>
-    <color name="colorPrimaryDark">#00796B</color>
-    <color name="colorAccent">#00BCD4</color>
+    <color name="colorPrimary">#005EA8</color>
+    <color name="colorPrimaryDark">#004C97</color>
+    <color name="colorAccent">#FF9800</color>
     <color name="text_primary">#ffffff</color>
     <color name="text_secondary">#757575</color>
 
     <color name="si_default_text_color">#FF0000</color>
     <color name="si_default_text_color_selected">#FF00FF</color>
     <color name="si_default_indicator_bg">#ee9999</color>
+    <color name="selectedColorAccent">#99FF9800</color>
+    <color name="elevated_info">#ccffffff</color>
 
 </resources>

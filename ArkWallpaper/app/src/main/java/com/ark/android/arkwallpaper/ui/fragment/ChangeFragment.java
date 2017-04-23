@@ -8,13 +8,18 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.ark.android.arkwallpaper.R;
+import com.ark.android.arkwallpaper.presenter.contract.HomeContract;
 
 /**
  * Created by ahmed-basyouni on 4/17/17.
  */
 
-public class ChangeFragment extends Fragment {
+public class ChangeFragment extends Fragment implements HomeContract.OnHomePagerChange{
 
+    @Override
+    public void onFragmentSelected() {
+
+    }
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

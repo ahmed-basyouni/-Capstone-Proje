@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/coordinateLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -15,7 +14,8 @@
         <android.support.design.widget.AppBarLayout
             android:id="@+id/appBar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:elevation="@dimen/default_elevation">
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -28,8 +28,8 @@
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/indicator"
                 android:layout_width="match_parent"
-                android:layout_height="62dp"
-                app:siRadiusMax= "30dp"
+                android:layout_height="48dp"
+                app:siRadiusMax= "18dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="4dp"
                 app:siIndicatorColor="@android:color/white"

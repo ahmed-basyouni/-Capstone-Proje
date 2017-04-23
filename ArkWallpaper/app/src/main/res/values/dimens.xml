@@ -5,5 +5,10 @@
     <dimen name="si_default_text_size">14sp</dimen>
     <dimen name="si_default_radius_max">24dp</dimen>
     <dimen name="si_default_radius_min">8dp</dimen>
+    <dimen name="fab_elevation">6dp</dimen>
+    <dimen name="fab_press_translation_z">12dp</dimen>
+    <dimen name="cardView_margin">8dp</dimen>
+    <dimen name="smallPadding">5dp</dimen>
+    <dimen name="textSizeMedium">18sp</dimen>
 
 </resources>

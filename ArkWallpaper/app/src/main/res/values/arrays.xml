@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <integer-array name="tabs_drawables">
+        <item>@drawable/change_selector</item>
+        <item>@drawable/albums_selector</item>
+        <item>@drawable/settings_selector</item>
+    </integer-array>
+
+</resources>

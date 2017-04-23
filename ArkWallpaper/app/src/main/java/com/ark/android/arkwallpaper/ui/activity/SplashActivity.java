@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.ActivityOptions;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,6 +23,7 @@ import com.ark.android.arkwallpaper.R;
 import com.ark.android.arkwallpaper.ui.customviews.AnimatedSvgView;
 import com.ark.android.arkwallpaper.utils.LogoPaths;
 import com.ark.android.arkwallpaper.utils.uiutils.GlideBlurringTransformation;
+import com.ark.android.gallerylib.data.GallaryDataBaseContract;
 import com.bumptech.glide.Glide;
 
 public class SplashActivity extends AppCompatActivity {
@@ -37,15 +39,29 @@ public class SplashActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_splash);
+        if(getIntent().getExtras() != null && getIntent().getExtras().getBoolean("update", false)){
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_ENABLED, 1);
+            getContentResolver().update(GallaryDataBaseContract.AlbumsTable.CONTENT_URI,contentValues,GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_NAME + " = ?"
+                                            ,new String[]{"a"});
+        }
         mInitialLogoOffset = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16,
                 getResources().getDisplayMetrics());
         mSubtitleView = findViewById(R.id.logo_subtitle);
         ImageView splashImageView = (ImageView) findViewById(R.id.splashBg);
         Glide.with(this)
-                .load(R.drawable.splash)
+                .load(R.drawable.bg3)
                 .bitmapTransform(new GlideBlurringTransformation(this))
                 .into(splashImageView);
         mLogoView = (AnimatedSvgView) findViewById(R.id.animated_logo);
+        mLogoView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(SplashActivity.this, HomeActivity.class));
+                SplashActivity.this.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                SplashActivity.this.finish();
+            }
+        });
         mLogoView.setGlyphStrings(LogoPaths.GLYPHS);
         Handler mHandler = new Handler();
         mLogoView.setOnStateChangeListener(new AnimatedSvgView.OnStateChangeListener() {
@@ -69,7 +85,7 @@ public class SplashActivity extends AppCompatActivity {
                     a1.setInterpolator(interpolator);
                     a2.setInterpolator(interpolator);
                     a4.setInterpolator(bounceInterpolator);
-                    set.setDuration(700).playTogether(a1, a2, a3,a4);
+                    set.setDuration(700).playTogether(a1, a2, a3, a4);
                     set.start();
 
                     set.addListener(new Animator.AnimatorListener() {
@@ -80,9 +96,9 @@ public class SplashActivity extends AppCompatActivity {
 
                         @Override
                         public void onAnimationEnd(Animator animation) {
-                            startActivity(new Intent(SplashActivity.this, HomeActivity.class));
-                            SplashActivity.this.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                            SplashActivity.this.finish();
+//                            startActivity(new Intent(SplashActivity.this, HomeActivity.class));
+//                            SplashActivity.this.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+//                            SplashActivity.this.finish();
                         }
 
                         @Override
