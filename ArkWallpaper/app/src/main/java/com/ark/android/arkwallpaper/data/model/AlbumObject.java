@@ -19,6 +19,24 @@ public class AlbumObject implements Serializable {
     private String albumName;
     private Uri albumImage;
     private boolean enabled;
+    private int type;
+    private int count;
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
 
     public boolean isEnabled() {
         return enabled;
@@ -52,6 +70,8 @@ public class AlbumObject implements Serializable {
             albumObject.setAlbumName(cursor.getString(cursor.getColumnIndex(GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_NAME)));
             albumObject.setAlbumImage(Uri.parse(cursor.getString(cursor.getColumnIndex(GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_IMAGE_URI))));
             albumObject.setEnabled(cursor.getInt(cursor.getColumnIndex(GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_ENABLED)) == 1);
+            albumObject.setType(cursor.getInt(cursor.getColumnIndex(GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_TYPE)));
+            albumObject.setCount(cursor.getInt(cursor.getColumnIndex(GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_COUNT)));
             albums.add(albumObject);
             cursor.moveToNext();
         }

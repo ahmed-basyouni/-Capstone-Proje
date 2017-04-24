@@ -127,6 +127,7 @@ public class ChooserActivity extends AppCompatActivity {
         Intent data = new Intent();
         data.putExtra(CANCEL_REASON , reason);
         setResult(Activity.RESULT_CANCELED, data);
+        finish();
     }
 
     @Override
@@ -138,6 +139,7 @@ public class ChooserActivity extends AppCompatActivity {
         }
 
         if (resultCode != RESULT_OK || result == null) {
+            setCancelResult(CancelReason.REASON_CANCEL);
             return;
         }
 

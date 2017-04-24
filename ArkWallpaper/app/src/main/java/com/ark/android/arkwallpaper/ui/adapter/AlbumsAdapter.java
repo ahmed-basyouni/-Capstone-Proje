@@ -106,6 +106,8 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
             }
         });
 
+        holder.albumCount.setText(String.format(context.getString(R.string.albumCount), albumObject.getCount()));
+
         Glide.with(context)
                 .using(new GlideContentProviderLoader(context))
                 .load(albumObject.getAlbumImage())
@@ -222,6 +224,7 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
         @BindView(R.id.editAlbum) TextView editAlbum;
         @BindView(R.id.deleteAlbum) TextView deleteAlbum;
         @BindView(R.id.hideSelectedView) TextView hideSelectedView;
+        @BindView(R.id.albumCount) TextView albumCount;
 
         AlbumsViewHolder(View itemView) {
             super(itemView);

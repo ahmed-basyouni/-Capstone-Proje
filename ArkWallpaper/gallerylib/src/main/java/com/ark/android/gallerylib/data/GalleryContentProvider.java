@@ -321,7 +321,7 @@ public class GalleryContentProvider extends ContentProvider {
         // chosen image files for each row being deleted. Instead we have to query
         // and manually delete each chosen image file
         String[] projection = new String[]{
-                GallaryDataBaseContract.GalleryTable.COLUMN_NAME_URI};
+                GallaryDataBaseContract.GalleryTable.COLUMN_NAME_URI, GallaryDataBaseContract.GalleryTable.COLUMN_PARENT_URI};
         Cursor rowsToDelete = queryGalleyImages(GallaryDataBaseContract.GalleryTable.CONTENT_URI
                 , projection, selection, selectionArgs, null);
         if (rowsToDelete == null) {
@@ -329,7 +329,12 @@ public class GalleryContentProvider extends ContentProvider {
         }
         rowsToDelete.moveToFirst();
         while (!rowsToDelete.isAfterLast()) {
-            String imageUri = rowsToDelete.getString(0);
+            String imageUri = "";
+            if(rowsToDelete.getString(rowsToDelete.getColumnIndex(GallaryDataBaseContract.GalleryTable.COLUMN_PARENT_URI)) != null &&
+                    rowsToDelete.getString(rowsToDelete.getColumnIndex(GallaryDataBaseContract.GalleryTable.COLUMN_PARENT_URI)).equalsIgnoreCase(""))
+                imageUri = rowsToDelete.getString(rowsToDelete.getColumnIndex(GallaryDataBaseContract.GalleryTable.COLUMN_PARENT_URI));
+            else
+                imageUri = rowsToDelete.getString(rowsToDelete.getColumnIndex(GallaryDataBaseContract.GalleryTable.COLUMN_NAME_URI));
             Uri uriToRelease = Uri.parse(imageUri);
             ContentResolver contentResolver = context.getContentResolver();
             boolean haveUriPermission = context.checkUriPermission(uriToRelease,
@@ -500,6 +505,8 @@ public class GalleryContentProvider extends ContentProvider {
                 GallaryDataBaseContract.GalleryTable.COLUMN_NAME_URI);
         allColumnProjectionMap.put(GallaryDataBaseContract.GalleryTable.COLUMN_ALBUM_NAME,
                 GallaryDataBaseContract.GalleryTable.COLUMN_ALBUM_NAME);
+        allColumnProjectionMap.put(GallaryDataBaseContract.GalleryTable.COLUMN_PARENT_URI,
+                GallaryDataBaseContract.GalleryTable.COLUMN_PARENT_URI);
         return allColumnProjectionMap;
     }
 
@@ -512,6 +519,10 @@ public class GalleryContentProvider extends ContentProvider {
                 GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_IMAGE_URI);
         allColumnProjectionMap.put(GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_ENABLED,
                 GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_ENABLED);
+        allColumnProjectionMap.put(GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_TYPE,
+                GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_TYPE);
+        allColumnProjectionMap.put(GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_COUNT,
+                GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_COUNT);
         return allColumnProjectionMap;
     }
 }

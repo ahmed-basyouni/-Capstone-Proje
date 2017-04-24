@@ -118,7 +118,7 @@ public class AlbumsFragment extends Fragment implements
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         return new CursorLoader(getActivity(), GallaryDataBaseContract.AlbumsTable.CONTENT_URI, new String[]{BaseColumns._ID, GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_NAME,
                 GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_IMAGE_URI
-                , GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_ENABLED}, null, null, null);
+                , GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_ENABLED, GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_TYPE, GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_COUNT}, null, null, null);
     }
 
     @Override

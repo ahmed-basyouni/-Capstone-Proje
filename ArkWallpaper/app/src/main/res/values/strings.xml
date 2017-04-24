@@ -12,4 +12,8 @@
     <string name="close">close</string>
     <string name="rename">Rename</string>
     <string name="album_delete_confirmation">Are you sure you want to delete this album?</string>
+    <string name="permission_denied">Please grant permission to continue</string>
+    <string name="gallery_add_photos_error">Your device does not support adding pictures.\nPlease contact your manufacturer.</string>
+    <string name="gallery_add_folder_error">Your device does not support adding folders.\nPlease contact your manufacturer.</string>
+    <string name="albumCount">(%d images)</string>
 </resources>

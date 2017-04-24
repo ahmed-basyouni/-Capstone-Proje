@@ -20,7 +20,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.activity.HomeActivity" />
-        <activity android:name=".ui.activity.AlbumActivity"></activity>
+        <activity android:name=".ui.activity.AlbumActivity"/>
     </application>
 
 </manifest>
