@@ -245,15 +245,14 @@ public class GalleryContentProvider extends ContentProvider {
             }
         }
 
-        if(values.containsKey(GallaryDataBaseContract.GalleryTable.COLUMN_ALBUM_NAME)){
-            updateAlbumImage(values.getAsString(GallaryDataBaseContract.GalleryTable.COLUMN_ALBUM_NAME));
-        }
-
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         long rowId = db.insert(GallaryDataBaseContract.GalleryTable.TABLE_NAME,
                 GallaryDataBaseContract.GalleryTable.COLUMN_NAME_URI, values);
         // If the insert succeeded, the row ID exists.
         if (rowId > 0) {
+            if(values.containsKey(GallaryDataBaseContract.GalleryTable.COLUMN_ALBUM_NAME)){
+                updateAlbumImage(values.getAsString(GallaryDataBaseContract.GalleryTable.COLUMN_ALBUM_NAME));
+            }
             // Creates a URI with the chosen photos ID pattern and the new row ID appended to it.
             final Uri chosenPhotoUri = ContentUris.withAppendedId(GallaryDataBaseContract.GalleryTable.CONTENT_URI, rowId);
             notifyChange(chosenPhotoUri);

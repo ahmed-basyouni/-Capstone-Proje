@@ -41,7 +41,7 @@ public class GalleryDBHelper extends SQLiteOpenHelper {
                 + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + GallaryDataBaseContract.GalleryTable.COLUMN_NAME_URI + " TEXT NOT NULL,"
                 + GallaryDataBaseContract.GalleryTable.COLUMN_ALBUM_NAME + " TEXT NOT NULL,"
-                + GallaryDataBaseContract.GalleryTable.COLUMN_PARENT_URI + " TEXT NOT NULL,"
+                + GallaryDataBaseContract.GalleryTable.COLUMN_PARENT_URI + " TEXT,"
                 + "UNIQUE (" + GallaryDataBaseContract.GalleryTable.COLUMN_NAME_URI + ") ON CONFLICT REPLACE)");
     }
 

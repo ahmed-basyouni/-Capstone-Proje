@@ -31,6 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/text_secondary"
+            android:padding="@dimen/smallPadding"
             android:id="@+id/albumName"/>
         
         <TextView
@@ -38,6 +39,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/text_secondary"
             android:id="@+id/albumCount"
+            android:padding="@dimen/smallPadding"
             android:text="@string/albumCount"/>
 
     </LinearLayout>
