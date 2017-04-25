@@ -14,6 +14,7 @@
             android:name=".data.GalleryContentProvider"
             android:authorities="com.ark.android.gallerylib.galleryAuthority"
             android:exported="false"
+            android:syncable="true"
             android:grantUriPermissions="true" />
     </application>
 

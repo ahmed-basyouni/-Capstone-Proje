@@ -215,7 +215,7 @@ public class GalleryContentProvider extends ContentProvider {
                 // You can't persist URI permissions from your own app, so this fails.
                 // We'll still have access to it directly
             }
-        } else {
+        } else if(ContentResolver.SCHEME_CONTENT.equals(uriToTake.getScheme())){
             boolean haveUriPermission = context.checkUriPermission(uriToTake,
                     Binder.getCallingPid(), Binder.getCallingUid(),
                     Intent.FLAG_GRANT_READ_URI_PERMISSION) == PackageManager.PERMISSION_GRANTED;
@@ -336,24 +336,26 @@ public class GalleryContentProvider extends ContentProvider {
                 imageUri = rowsToDelete.getString(rowsToDelete.getColumnIndex(GallaryDataBaseContract.GalleryTable.COLUMN_NAME_URI));
             Uri uriToRelease = Uri.parse(imageUri);
             ContentResolver contentResolver = context.getContentResolver();
-            boolean haveUriPermission = context.checkUriPermission(uriToRelease,
-                    Binder.getCallingPid(), Binder.getCallingUid(),
-                    Intent.FLAG_GRANT_READ_URI_PERMISSION) == PackageManager.PERMISSION_GRANTED;
-            if (haveUriPermission) {
-                // Try to release any persisted URI permission for the imageUri
-                List<UriPermission> persistedUriPermissions = contentResolver.getPersistedUriPermissions();
-                for (UriPermission persistedUriPermission : persistedUriPermissions) {
-                    if (persistedUriPermission.getUri().equals(uriToRelease)) {
-                        contentResolver.releasePersistableUriPermission(
-                                uriToRelease, Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                        break;
+            if(ContentResolver.SCHEME_CONTENT.equals(uriToRelease.getScheme())) {
+                boolean haveUriPermission = context.checkUriPermission(uriToRelease,
+                        Binder.getCallingPid(), Binder.getCallingUid(),
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION) == PackageManager.PERMISSION_GRANTED;
+                if (haveUriPermission) {
+                    // Try to release any persisted URI permission for the imageUri
+                    List<UriPermission> persistedUriPermissions = contentResolver.getPersistedUriPermissions();
+                    for (UriPermission persistedUriPermission : persistedUriPermissions) {
+                        if (persistedUriPermission.getUri().equals(uriToRelease)) {
+                            contentResolver.releasePersistableUriPermission(
+                                    uriToRelease, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                            break;
+                        }
                     }
+                } else {
+                    // On API 25 and lower, we don't get URI permissions to URIs
+                    // from our own package so we manage those URI permissions manually
+                    contentResolver.call(uriToRelease, "releasePersistableUriPermission",
+                            uriToRelease.toString(), null);
                 }
-            } else {
-                // On API 25 and lower, we don't get URI permissions to URIs
-                // from our own package so we manage those URI permissions manually
-                contentResolver.call(uriToRelease, "releasePersistableUriPermission",
-                        uriToRelease.toString(), null);
             }
             rowsToDelete.moveToNext();
         }

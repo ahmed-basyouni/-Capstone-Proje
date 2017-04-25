@@ -1,1 +1,1 @@
-include ':app', ':gallerylib'
+include ':app' , ':onlinesourcelib' , ':gallerylib'

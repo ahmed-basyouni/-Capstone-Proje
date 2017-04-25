@@ -16,4 +16,5 @@
     <string name="gallery_add_photos_error">Your device does not support adding pictures.\nPlease contact your manufacturer.</string>
     <string name="gallery_add_folder_error">Your device does not support adding folders.\nPlease contact your manufacturer.</string>
     <string name="albumCount">(%d images)</string>
+    <string name="album_single_image">imageTransition</string>
 </resources>

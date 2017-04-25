@@ -2,7 +2,12 @@ package com.ark.android.arkwallpaper.ui.adapter;
 
 import android.animation.Animator;
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.os.Build;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -32,6 +37,7 @@ import com.ark.android.arkwallpaper.presenter.contract.AlbumFragmentContract;
 import com.ark.android.arkwallpaper.ui.activity.AlbumActivity;
 import com.ark.android.arkwallpaper.utils.uiutils.GlideContentProviderLoader;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.List;
 
@@ -111,6 +117,7 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
         Glide.with(context)
                 .using(new GlideContentProviderLoader(context))
                 .load(albumObject.getAlbumImage())
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .into(holder.albumImage);
 
         if(!albumObject.isEnabled()){
@@ -130,7 +137,19 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
             @Override
             public boolean onSingleTapUp(MotionEvent e) {
                 if(holder.selectedView.getVisibility() == View.GONE){
-                    context.startActivity(new Intent(context, AlbumActivity.class).putExtra("albumName" , albumObject.getAlbumName()));
+                    Intent i = new Intent(context,  AlbumActivity.class);
+                    i.putExtra("albumName" , albumObject.getAlbumName());
+                    Bundle b = null;
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                        //b = ActivityOptions.makeScaleUpAnimation(view, 0, 0, view.getWidth(),
+                        //                                         view.getHeight()).toBundle();
+                        Bitmap bitmap = Bitmap.createBitmap(holder.viewsHolder.getWidth(), holder.viewsHolder.getHeight(), Bitmap.Config.ARGB_8888);
+                        bitmap.eraseColor(Color.parseColor("#308cf8"));
+
+                        b = ActivityOptions.makeThumbnailScaleUpAnimation(holder.viewsHolder, bitmap, 0, 0).toBundle();
+                    }
+                    context.startActivity(i, b);
+//                    context.startActivity(new Intent(context, AlbumActivity.class).putExtra("albumName" , albumObject.getAlbumName()));
                 }
                 return true;
             }

@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/ArkWallpaper.iml" filepath="$PROJECT_DIR$/ArkWallpaper.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/gallerylib/gallerylib.iml" filepath="$PROJECT_DIR$/gallerylib/gallerylib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/onlinesourcelib/onlinesourcelib.iml" filepath="$PROJECT_DIR$/onlinesourcelib/onlinesourcelib.iml" />
     </modules>
   </component>
 </project>

@@ -3,14 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/imageHolder"
-    android:layout_marginStart="@dimen/cardView_margin"
-    android:layout_marginEnd="@dimen/cardView_margin"
-    android:layout_marginBottom="@dimen/cardView_margin"
     android:elevation="@dimen/default_elevation">
 
     <ImageView
         android:id="@+id/albumSingleImage"
         android:layout_width="match_parent"
+        android:transitionName="@string/album_single_image"
         android:layout_height="match_parent"
         android:scaleType="centerCrop" />
 

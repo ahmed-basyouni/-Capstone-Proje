@@ -11,6 +11,7 @@
     <color name="si_default_indicator_bg">#ee9999</color>
     <color name="selectedColorAccent">#99FF9800</color>
     <color name="elevated_info">#ccffffff</color>
+    <color name="expanded_image_bg">#cc757575</color>
     <color name="floatingFolderColor">#E040FB</color>
     <color name="floatingImageColor">#009688</color>
 

@@ -2,6 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.ark.android.arkwallpaper">
 
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+    <!-- Required for fetching feed data. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- Required to register a SyncStatusObserver to display a "syncing..." progress indicator. -->
+    <uses-permission android:name="android.permission.READ_SYNC_STATS"/>
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -21,6 +27,7 @@
         </activity>
         <activity android:name=".ui.activity.HomeActivity" />
         <activity android:name=".ui.activity.AlbumActivity"/>
+
     </application>
 
 </manifest>

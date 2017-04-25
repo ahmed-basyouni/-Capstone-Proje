@@ -14,29 +14,21 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.ark.android.arkwallpaper.R;
 import com.ark.android.arkwallpaper.ui.adapter.AlbumAdapter;
-import com.ark.android.arkwallpaper.ui.adapter.AlbumsAdapter;
-import com.ark.android.arkwallpaper.utils.uiutils.GlideContentProviderLoader;
 import com.ark.android.gallerylib.CancelReason;
 import com.ark.android.gallerylib.ChooserActivity;
 import com.ark.android.gallerylib.data.GallaryDataBaseContract;
-import com.bumptech.glide.Glide;
+import com.ark.android.onlinesourcelib.FiveHundredSyncAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,11 +49,14 @@ public class AlbumActivity extends AppCompatActivity implements LoaderManager.Lo
     FloatingActionButton addFolder;
     @BindView(R.id.addImage)
     FloatingActionButton addImage;
+    @BindView(R.id.progressbar)
+    ProgressBar progressBar;
     private Animation fabOpen;
     private Animation fabClose;
     private Animation rotateForward;
     private Animation rotateBackward;
     private boolean isFabOpen;
+    private View.OnClickListener backClick;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,13 +68,15 @@ public class AlbumActivity extends AppCompatActivity implements LoaderManager.Lo
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-
+        toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back_white_24dp));
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlbumActivity.this.finish();
             }
         });
+
+        getSupportActionBar().setTitle(getIntent().getExtras().getString("albumName"));
 
         getSupportLoaderManager().initLoader(0, null, this);
 
@@ -91,6 +88,8 @@ public class AlbumActivity extends AppCompatActivity implements LoaderManager.Lo
         floatingMenu.setOnClickListener(this);
         addFolder.setOnClickListener(this);
         addImage.setOnClickListener(this);
+        if(getIntent().getExtras().getString("albumName").equals(FiveHundredSyncAdapter.ALBUM_NAME))
+            progressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -102,8 +101,10 @@ public class AlbumActivity extends AppCompatActivity implements LoaderManager.Lo
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        if (data != null && data.getCount() > 0)
+        if (data != null && data.getCount() > 0) {
+            progressBar.setVisibility(View.GONE);
             setupAdapter(data);
+        }
     }
 
     private void setupAdapter(Cursor data) {
@@ -114,7 +115,21 @@ public class AlbumActivity extends AppCompatActivity implements LoaderManager.Lo
             data.moveToNext();
         }
 
-        albumList.setLayoutManager(new GridLayoutManager(this, 2));
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
+
+        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                int mod = position % 3;
+
+                if(mod == 0 || mod == 1)
+                    return 1;
+                else
+                    return 2;
+            }
+        });
+        albumList.setLayoutManager(gridLayoutManager);
+//        albumList.addItemDecoration(new GridSeparator(2, 8, true));
         albumList.setAdapter(new AlbumAdapter(images, this));
     }
 
@@ -197,5 +212,18 @@ public class AlbumActivity extends AppCompatActivity implements LoaderManager.Lo
                 .putExtra(ChooserActivity.ALBUM_NAME, getIntent().getExtras().getString("albumName"))
                 .putExtra(ChooserActivity.CHOSEN_SOURCE, isFolder
                         ? ChooserActivity.CHOOSE_FOLDER : ChooserActivity.CHOOSE_IMAGE), CHOOSER_ACTIVITY_REQUEST);
+    }
+
+    public void setBackClickable(View.OnClickListener backClickable){
+        this.backClick = backClickable;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(backClick != null && findViewById(R.id.expandedImageView).getVisibility() == View.VISIBLE){
+            backClick.onClick(null);
+        }else{
+            super.onBackPressed();
+        }
     }
 }
