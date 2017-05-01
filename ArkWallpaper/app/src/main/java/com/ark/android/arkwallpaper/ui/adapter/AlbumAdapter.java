@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.app.Activity;
 import android.app.Dialog;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -20,16 +19,22 @@ import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.ark.android.arkwallpaper.R;
 import com.ark.android.arkwallpaper.ui.activity.AlbumActivity;
+import com.ark.android.arkwallpaper.utils.IOUtils;
+import com.ark.android.arkwallpaper.utils.WallPaperUtils;
 import com.ark.android.arkwallpaper.utils.uiutils.GlideContentProviderLoader;
+import com.ark.android.gallerylib.data.GallaryDataBaseContract;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import butterknife.BindView;
@@ -71,21 +76,21 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder>
     }
 
     @Override
-    public void onBindViewHolder(final AlbumHolder holder, final int position) {
+    public void onBindViewHolder(final AlbumHolder holder, int position) {
 
         RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) holder.imageHolder.getLayoutParams();
 
-        if(getItemViewType(position) == TWO_CELLS) {
+        if(getItemViewType(holder.getAdapterPosition()) == TWO_CELLS) {
             params.width = (width / 2) - 25;
             params.height = (height / 3) - 24;
-            if(position % 3 == 0) {
+            if(holder.getAdapterPosition() % 3 == 0) {
                 params.setMarginStart(16);
                 params.setMarginEnd(8);
-            }else if(position % 3 == 1){
+            }else if(holder.getAdapterPosition() % 3 == 1){
                 params.setMarginStart(8);
                 params.setMarginEnd(16);
             }
-        }else if(getItemViewType(position) == ONE_CELL){
+        }else if(getItemViewType(holder.getAdapterPosition()) == ONE_CELL){
             params.width = width - 32;
             params.setMarginStart(16);
             params.setMarginEnd(16);
@@ -96,14 +101,16 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder>
 
         Glide.with(mContext)
                 .using(new GlideContentProviderLoader(mContext))
-                .load(images.get(position))
+                .load(images.get(holder.getAdapterPosition()))
+                .asBitmap()
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .override(params.width, params.height)
                 .into(holder.albumSingleImage);
 
         holder.albumSingleImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                zoomImageFromThumb(holder.albumSingleImage,images.get(position));
+                zoomImageFromThumb(holder.albumSingleImage,images.get(holder.getAdapterPosition()));
             }
         });
     }
@@ -129,7 +136,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder>
         dialog.show();
     }
 
-    private void zoomImageFromThumb(final View thumbView, Uri imageResId) {
+    private void zoomImageFromThumb(final View thumbView, final Uri imageResId) {
         // If there's an animation in progress, cancel it
         // immediately and proceed with this one.
         if (mCurrentAnimator != null) {
@@ -144,9 +151,32 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder>
         final ProgressBar progressBar = (ProgressBar) mContext.findViewById(R.id.progressbar);
         progressBar.setVisibility(View.VISIBLE);
 
+        final TextView setAsWallpaper = (TextView) mContext.findViewById(R.id.setAsWallpaper);
+
+        final TextView downloadImage = (TextView) mContext.findViewById(R.id.downloadImage);
+
+        setAsWallpaper.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                WallPaperUtils.changeWallpaperBroadCast(imageResId.toString());
+            }
+        });
+
+        downloadImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    IOUtils.exportFile(new File(imageResId.getPath()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
         Glide.with(mContext)
                 .using(new GlideContentProviderLoader(mContext))
                 .load(imageResId)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .override(width, height)
                 .listener(new RequestListener<Uri, GlideDrawable>() {
                     @Override
@@ -161,7 +191,6 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder>
                         return false;
                     }
                 })
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .into(expandedImageView);
 
         // Calculate the starting and ending bounds for the zoomed-in image.
@@ -208,7 +237,9 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder>
         // thumbnail.
         thumbView.setAlpha(0f);
         expandedImageView.setVisibility(View.VISIBLE);
-        largeContainer.setVisibility(View.VISIBLE);
+        largeContainer.setVisibility(View.GONE);
+        setAsWallpaper.setVisibility(View.VISIBLE);
+        downloadImage.setVisibility(View.VISIBLE);
         mContext.findViewById(R.id.floatingMenu).setVisibility(View.GONE);
         // Set the pivot point for SCALE_X and SCALE_Y transformations
         // to the top-left corner of the zoomed-in view (the default
@@ -276,7 +307,10 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder>
                         thumbView.setAlpha(1f);
                         expandedImageView.setVisibility(View.GONE);
                         largeContainer.setVisibility(View.GONE);
-                        mContext.findViewById(R.id.floatingMenu).setVisibility(View.VISIBLE);
+                        setAsWallpaper.setVisibility(View.GONE);
+                        downloadImage.setVisibility(View.GONE);
+                        if(mContext.getmAlbumtype() == GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_GALLERY)
+                            mContext.findViewById(R.id.floatingMenu).setVisibility(View.VISIBLE);
                         mCurrentAnimator = null;
                     }
 
@@ -285,7 +319,10 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder>
                         thumbView.setAlpha(1f);
                         expandedImageView.setVisibility(View.GONE);
                         largeContainer.setVisibility(View.GONE);
-                        mContext.findViewById(R.id.floatingMenu).setVisibility(View.VISIBLE);
+                        setAsWallpaper.setVisibility(View.GONE);
+                        downloadImage.setVisibility(View.GONE);
+                        if(mContext.getmAlbumtype() == GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_GALLERY)
+                            mContext.findViewById(R.id.floatingMenu).setVisibility(View.VISIBLE);
                         mCurrentAnimator = null;
                     }
                 });

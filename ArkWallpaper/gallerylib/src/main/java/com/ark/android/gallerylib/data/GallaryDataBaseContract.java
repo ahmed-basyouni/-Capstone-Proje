@@ -71,6 +71,10 @@ public class GallaryDataBaseContract {
         public static final String COLUMN_ALBUM_COUNT = "image_count";
 
         public static final String COLUMN_ALBUM_TYPE = "album_type";
+
+        public static final String COLUMN_ALBUM_TUMBLR_BLOG_NAME = "tumblr_blog_name";
+
+        public static final String COLUMN_ALBUM_Five_PX_CATEGORY = "five_px_category";
         /**
          * The MIME type of {@link #CONTENT_URI} providing metadata.
          */

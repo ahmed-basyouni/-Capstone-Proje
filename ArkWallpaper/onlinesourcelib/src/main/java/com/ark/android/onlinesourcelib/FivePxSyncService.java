@@ -20,7 +20,7 @@ import android.util.Log;
  * manage the lifecycle of our {@link } and provide a handle to said SyncAdapter to the
  * OS on request.
  */
-public class SyncService extends Service {
+public class FivePxSyncService extends Service {
     private static final String TAG = "SyncService";
 
     private static final Object sSyncAdapterLock = new Object();

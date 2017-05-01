@@ -12,11 +12,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
-<sync-adapter xmlns:android="http://schemas.android.com/apk/res/android"
-    android:contentAuthority="com.ark.android.gallerylib.galleryAuthority"
-    android:accountType="com.ark.android.onlinesourcelib.account"
-    android:userVisible="false"
-    android:supportsUploading="false"
-    android:allowParallelSyncs="false"
-    android:isAlwaysSyncable="true"
+<account-authenticator xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accountType="com.ark.android.arkwallpapertumblr.account"
+    android:icon="@drawable/ic_launcher"
+    android:smallIcon="@drawable/ic_launcher"
+    android:label="@string/tumblr_auth_name"
     />

@@ -10,18 +10,115 @@
         android:layout_height="match_parent"
         android:id="@+id/albumsList"/>
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:visibility="invisible"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="230dp"
+        android:layout_marginRight="@dimen/fab_margin"
+        android:id="@+id/addTumblrContainer">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/addTumblrAlbum"
+            android:id="@+id/addtumblrText"
+            android:textColor="@android:color/white"
+            android:padding="@dimen/smallPadding"
+            android:background="@color/expanded_image_bg"/>
+
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/addAlbum"
+        android:id="@+id/addTumblr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:src="@drawable/ic_folder_white_24dp"
+        android:visibility="invisible"
+        app:backgroundTint="@color/floatingFolderColor"
+        app:elevation="6dp"
+        app:pressedTranslationZ="12dp" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="160dp"
+        android:gravity="center"
+        android:visibility="invisible"
+        android:layout_gravity="bottom|end"
+        android:layout_marginRight="@dimen/fab_margin"
+        android:id="@+id/addFiveContainer">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/addfivePxAlbum"
+            android:id="@+id/addFiveText"
+            android:textColor="@android:color/white"
+            android:padding="@dimen/smallPadding"
+            android:background="@color/expanded_image_bg"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/addFive"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:src="@drawable/ic_folder_white_24dp"
+            android:visibility="invisible"
+            app:backgroundTint="@color/floatingFolderColor"
+            app:elevation="6dp"
+            app:pressedTranslationZ="12dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:visibility="invisible"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="90dp"
+        android:layout_marginRight="@dimen/fab_margin"
+        android:id="@+id/addAlbumContainer">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/addAlbum"
+            android:id="@+id/addAlbumText"
+            android:textColor="@android:color/white"
+            android:padding="@dimen/smallPadding"
+            android:background="@color/expanded_image_bg"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/addAlbum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:src="@drawable/ic_insert_photo_white_24dp"
+            android:visibility="invisible"
+            app:backgroundTint="@color/floatingImageColor"
+            app:elevation="6dp"
+            app:pressedTranslationZ="12dp" />
+
+        </LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floatingMenu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:contentDescription="@string/add_album"
-        app:borderWidth="0dp"
-        android:clickable="true"
         android:src="@drawable/ic_add_white_24dp"
-        app:elevation="@dimen/fab_elevation"
-        app:fabSize="normal"
-        app:pressedTranslationZ="@dimen/fab_press_translation_z" />
+        app:backgroundTint="@color/colorAccent"
+        app:elevation="6dp"
+        app:pressedTranslationZ="12dp" />
 
 </android.support.design.widget.CoordinatorLayout>

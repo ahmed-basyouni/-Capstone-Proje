@@ -42,13 +42,15 @@ public class AlbumsManager implements AlbumFragmentContract.IAlbumsModel{
     }
 
     @Override
-    public void addAlbum(String albumName, int type) {
+    public void addAlbum(String albumName, int type, String fivePxCategoryName, String tumblrBlogName) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_NAME, albumName);
-        contentValues.put(GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_IMAGE_URI, "android.resource://"+ WallpaperApp.getWallpaperApp().getPackageName() +"/drawable/bg3");
+        contentValues.put(GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_IMAGE_URI, "");
         contentValues.put(GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_ENABLED, 1);
         contentValues.put(GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_COUNT, 0);
         contentValues.put(GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_TYPE, type);
+        contentValues.put(GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_TUMBLR_BLOG_NAME, tumblrBlogName);
+        contentValues.put(GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_Five_PX_CATEGORY, fivePxCategoryName);
         WallpaperApp.getWallpaperApp().getContentResolver().insert(GallaryDataBaseContract.AlbumsTable.CONTENT_URI, contentValues);
     }
 

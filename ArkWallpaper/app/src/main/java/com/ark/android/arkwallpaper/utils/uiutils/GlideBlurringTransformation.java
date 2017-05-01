@@ -22,6 +22,8 @@ public class GlideBlurringTransformation implements Transformation<Bitmap> {
 
     private static int MAX_RADIUS = 25;
     private static int DEFAULT_DOWN_SAMPLING = 1;
+    private static float DEFAULT_DESATURATED = 0.0f;
+    private final float mdesaturateAmount;
 
     private Context mContext;
     private BitmapPool mBitmapPool;
@@ -30,29 +32,34 @@ public class GlideBlurringTransformation implements Transformation<Bitmap> {
     private int mSampling;
 
     public GlideBlurringTransformation(Context context) {
-        this(context, Glide.get(context).getBitmapPool(), MAX_RADIUS, DEFAULT_DOWN_SAMPLING);
+        this(context, Glide.get(context).getBitmapPool(), MAX_RADIUS, DEFAULT_DOWN_SAMPLING, DEFAULT_DESATURATED);
     }
 
     public GlideBlurringTransformation(Context context, BitmapPool pool) {
-        this(context, pool, MAX_RADIUS, DEFAULT_DOWN_SAMPLING);
+        this(context, pool, MAX_RADIUS, DEFAULT_DOWN_SAMPLING, DEFAULT_DESATURATED);
     }
 
     public GlideBlurringTransformation(Context context, BitmapPool pool, int radius) {
-        this(context, pool, radius, DEFAULT_DOWN_SAMPLING);
+        this(context, pool, radius, DEFAULT_DOWN_SAMPLING, DEFAULT_DESATURATED);
     }
 
     public GlideBlurringTransformation(Context context, int radius) {
-        this(context, Glide.get(context).getBitmapPool(), radius, DEFAULT_DOWN_SAMPLING);
+        this(context, Glide.get(context).getBitmapPool(), radius, DEFAULT_DOWN_SAMPLING, DEFAULT_DESATURATED);
+    }
+
+    public GlideBlurringTransformation(Context context, int radius, float desaturateAmount) {
+        this(context, Glide.get(context).getBitmapPool(), radius, DEFAULT_DOWN_SAMPLING, desaturateAmount);
     }
 
     public GlideBlurringTransformation(Context context, int radius, int sampling) {
-        this(context, Glide.get(context).getBitmapPool(), radius, sampling);
+        this(context, Glide.get(context).getBitmapPool(), radius, sampling, DEFAULT_DESATURATED);
     }
 
-    public GlideBlurringTransformation(Context context, BitmapPool pool, int radius, int sampling) {
+    public GlideBlurringTransformation(Context context, BitmapPool pool, int radius, int sampling, float desaturateAmount) {
         mContext = context.getApplicationContext();
         mBitmapPool = pool;
         mRadius = radius;
+        mdesaturateAmount = desaturateAmount;
         mSampling = sampling;
     }
 
@@ -78,7 +85,9 @@ public class GlideBlurringTransformation implements Transformation<Bitmap> {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
             try {
-                bitmap = RSBlur.blur(mContext, bitmap, mRadius);
+                ImageBlurrer imageBlurrer = new ImageBlurrer(mContext, bitmap);
+                bitmap = imageBlurrer.blurBitmap(mRadius, mdesaturateAmount);
+                imageBlurrer.destroy();
             } catch (RSRuntimeException e) {
                 bitmap = FastBlur.blur(bitmap, mRadius, true);
             }

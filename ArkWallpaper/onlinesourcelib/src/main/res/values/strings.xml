@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">OnlineSourceLib</string>
+    <string name="five_auth_name">Ark 500px client</string>
+    <string name="tumblr_auth_name">Ark tumblr client</string>
 </resources>

@@ -21,6 +21,24 @@ public class AlbumObject implements Serializable {
     private boolean enabled;
     private int type;
     private int count;
+    private String tumblrBlogName;
+    private String fivePxCategoryName;
+
+    public String getTumblrBlogName() {
+        return tumblrBlogName;
+    }
+
+    public void setTumblrBlogName(String tumblrBlogName) {
+        this.tumblrBlogName = tumblrBlogName;
+    }
+
+    public String getFivePxCategoryName() {
+        return fivePxCategoryName;
+    }
+
+    public void setFivePxCategoryName(String fivePxCategoryName) {
+        this.fivePxCategoryName = fivePxCategoryName;
+    }
 
     public int getType() {
         return type;
@@ -72,6 +90,8 @@ public class AlbumObject implements Serializable {
             albumObject.setEnabled(cursor.getInt(cursor.getColumnIndex(GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_ENABLED)) == 1);
             albumObject.setType(cursor.getInt(cursor.getColumnIndex(GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_TYPE)));
             albumObject.setCount(cursor.getInt(cursor.getColumnIndex(GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_COUNT)));
+            albumObject.setTumblrBlogName(cursor.getString(cursor.getColumnIndex(GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_TUMBLR_BLOG_NAME)));
+            albumObject.setFivePxCategoryName(cursor.getString(cursor.getColumnIndex(GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_Five_PX_CATEGORY)));
             albums.add(albumObject);
             cursor.moveToNext();
         }

@@ -17,4 +17,32 @@
     <string name="gallery_add_folder_error">Your device does not support adding folders.\nPlease contact your manufacturer.</string>
     <string name="albumCount">(%d images)</string>
     <string name="album_single_image">imageTransition</string>
+    <string name="blogName">Blog name</string>
+    <string name="Syncung">Syncing.....</string>
+    <string name="blogNotFound">No blog found please check the name and try again</string>
+    <string name="choose_cat">Choose Category</string>
+    <string name="tumblrAlreadyExist">Tumblr album exist</string>
+    <string name="fivePxAlreadyExist">500Px album already exist</string>
+    <string name="addTumblrAlbum">Add tumblr</string>
+    <string name="addfivePxAlbum">Add 500Px</string>
+    <string name="addAlbum">Add Album from gallery</string>
+    <string name="app_description">View your photos as slideshow on your homescreen wallpaper at a defined interval</string>
+    <string name="select">select album</string>
+    <string name="setAsWallpaper">Set as wallpaper</string>
+    <string name="downloadFile">Download</string>
+
+    <string-array name="fivePx_Cat">
+        <item>All</item>
+        <item>Abstract</item>
+        <item>Animals</item>
+        <item>Black and White</item>
+        <item>Celebrities</item>
+        <item>City and Architecture</item>
+        <item>Family</item>
+        <item>Fine Art</item>
+        <item>Landscapes</item>
+        <item>Macro</item>
+        <item>Nature</item>
+    </string-array>
+
 </resources>

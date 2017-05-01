@@ -1,10 +1,14 @@
 
 package com.ark.android.arkwallpaper.ui.activity;
 
+import android.accounts.Account;
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.SyncStatusObserver;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.BaseColumns;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -18,17 +22,28 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.ark.android.arkwallpaper.R;
+import com.ark.android.arkwallpaper.data.manager.AlbumsManager;
+import com.ark.android.arkwallpaper.data.model.AlbumObject;
 import com.ark.android.arkwallpaper.ui.adapter.AlbumAdapter;
+import com.ark.android.arkwallpaper.utils.WallPaperUtils;
 import com.ark.android.gallerylib.CancelReason;
 import com.ark.android.gallerylib.ChooserActivity;
 import com.ark.android.gallerylib.data.GallaryDataBaseContract;
 import com.ark.android.onlinesourcelib.FiveHundredSyncAdapter;
+import com.ark.android.onlinesourcelib.FivePxGenericAccountService;
+import com.ark.android.onlinesourcelib.FivePxSyncUtils;
+import com.ark.android.onlinesourcelib.TumblrGenericAccountService;
+import com.ark.android.onlinesourcelib.TumblrSyncAdapter;
+import com.ark.android.onlinesourcelib.TumblrSyncUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,12 +66,25 @@ public class AlbumActivity extends AppCompatActivity implements LoaderManager.Lo
     FloatingActionButton addImage;
     @BindView(R.id.progressbar)
     ProgressBar progressBar;
+    @BindView(R.id.setAsWallpaper)
+    TextView setWallpaper;
+    @BindView(R.id.refreshFolder)
+    ImageButton refreshButton;
+    @BindView(R.id.syncProgressIndicator)
+    ProgressBar syncProgressIndicator;
+
+
     private Animation fabOpen;
     private Animation fabClose;
     private Animation rotateForward;
     private Animation rotateBackward;
     private boolean isFabOpen;
     private View.OnClickListener backClick;
+    private int mAlbumtype;
+
+    private Object mSyncTumblrObserverHandle;
+    private Object mSync500PxObserverHandle;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +101,27 @@ public class AlbumActivity extends AppCompatActivity implements LoaderManager.Lo
             @Override
             public void onClick(View v) {
                 AlbumActivity.this.finish();
+            }
+        });
+
+        mAlbumtype = getIntent().getExtras().getInt("type", GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_GALLERY);
+
+        if(mAlbumtype == GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_GALLERY)
+            refreshButton.setVisibility(View.GONE);
+
+        refreshButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mAlbumtype == GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_TUMBLR){
+                    Bundle bundle = new Bundle();
+                    bundle.putString("albumName" , getIntent().getExtras().getString("tumblrBlog"));
+                    TumblrSyncUtils.TriggerRefresh(bundle);
+
+                }else if(mAlbumtype == GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_PX){
+                    Bundle bundle = new Bundle();
+                    bundle.putString(FiveHundredSyncAdapter.CAT_KEY , getIntent().getExtras().getString("fivePxCat"));
+                    FivePxSyncUtils.TriggerRefresh(bundle);
+                }
             }
         });
 
@@ -93,9 +142,42 @@ public class AlbumActivity extends AppCompatActivity implements LoaderManager.Lo
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if(mAlbumtype == GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_TUMBLR){
+            mSyncTumblrStatusObserver.onStatusChanged(0);
+            // Watch for sync state changes
+            final int mask = ContentResolver.SYNC_OBSERVER_TYPE_PENDING |
+                    ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE;
+            mSyncTumblrObserverHandle = ContentResolver.addStatusChangeListener(mask, mSyncTumblrStatusObserver);
+
+        }else if(mAlbumtype == GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_PX){
+            mSyncFivePxStatusObserver.onStatusChanged(0);
+            // Watch for sync state changes
+            final int mask = ContentResolver.SYNC_OBSERVER_TYPE_PENDING |
+                    ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE;
+            mSync500PxObserverHandle = ContentResolver.addStatusChangeListener(mask, mSyncFivePxStatusObserver);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mSyncTumblrObserverHandle != null) {
+            ContentResolver.removeStatusChangeListener(mSyncTumblrObserverHandle);
+            mSyncTumblrObserverHandle = null;
+        }
+
+        if(mSync500PxObserverHandle != null){
+            ContentResolver.removeStatusChangeListener(mSync500PxObserverHandle);
+            mSync500PxObserverHandle = null;
+        }
+    }
+
+    @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         return new CursorLoader(this, GallaryDataBaseContract.GalleryTable.CONTENT_URI
-                , new String[]{BaseColumns._ID, GallaryDataBaseContract.GalleryTable.COLUMN_NAME_URI}, GallaryDataBaseContract.GalleryTable.COLUMN_ALBUM_NAME + " = ?"
+                , new String[]{BaseColumns._ID, GallaryDataBaseContract.GalleryTable.COLUMN_NAME_URI, GallaryDataBaseContract.GalleryTable.COLUMN_ALBUM_NAME}, GallaryDataBaseContract.GalleryTable.COLUMN_ALBUM_NAME + " = ?"
                 , new String[]{getIntent().getExtras().getString("albumName")}, null);
     }
 
@@ -111,6 +193,10 @@ public class AlbumActivity extends AppCompatActivity implements LoaderManager.Lo
         data.moveToFirst();
         List<Uri> images = new ArrayList<>();
         while (!data.isAfterLast()) {
+            if(data.getString(data.getColumnIndex(GallaryDataBaseContract.GalleryTable.COLUMN_ALBUM_NAME)).equalsIgnoreCase(TumblrSyncAdapter.ALBUM_NAME) ||
+                    data.getString(data.getColumnIndex(GallaryDataBaseContract.GalleryTable.COLUMN_ALBUM_NAME)).equalsIgnoreCase(FiveHundredSyncAdapter.ALBUM_NAME)){
+                floatingMenu.setVisibility(View.GONE);
+            }
             images.add(Uri.parse(data.getString(data.getColumnIndex(GallaryDataBaseContract.GalleryTable.COLUMN_NAME_URI))));
             data.moveToNext();
         }
@@ -224,6 +310,88 @@ public class AlbumActivity extends AppCompatActivity implements LoaderManager.Lo
             backClick.onClick(null);
         }else{
             super.onBackPressed();
+        }
+    }
+
+    public int getmAlbumtype() {
+        return mAlbumtype;
+    }
+
+    private SyncStatusObserver mSyncFivePxStatusObserver = new SyncStatusObserver() {
+        /** Callback invoked with the sync adapter status changes. */
+        @Override
+        public void onStatusChanged(int which) {
+            runOnUiThread(new Runnable() {
+                /**
+                 * The SyncAdapter runs on a background thread. To update the UI, onStatusChanged()
+                 * runs on the UI thread.
+                 */
+                @Override
+                public void run() {
+                    // Create a handle to the account that was created by
+                    // SyncService.CreateSyncAccount(). This will be used to query the system to
+                    // see how the sync status has changed.
+                    Account account = FivePxGenericAccountService.GetAccount(FivePxSyncUtils.ACCOUNT_TYPE);
+                    if (account == null) {
+                        // GetAccount() returned an invalid value. This shouldn't happen, but
+                        // we'll set the status to "not refreshing".
+                        setRefreshActionButtonState(false);
+                        return;
+                    }
+
+                    // Test the ContentResolver to see if the sync adapter is active or pending.
+                    // Set the state of the refresh button accordingly.
+                    boolean syncActive = ContentResolver.isSyncActive(
+                            account, GallaryDataBaseContract.GALLERY_AUTHORITY);
+                    boolean syncPending = ContentResolver.isSyncPending(
+                            account, GallaryDataBaseContract.GALLERY_AUTHORITY);
+                    setRefreshActionButtonState(syncActive || syncPending);
+                }
+            });
+        }
+    };
+
+    private SyncStatusObserver mSyncTumblrStatusObserver = new SyncStatusObserver() {
+        /** Callback invoked with the sync adapter status changes. */
+        @Override
+        public void onStatusChanged(int which) {
+            runOnUiThread(new Runnable() {
+                /**
+                 * The SyncAdapter runs on a background thread. To update the UI, onStatusChanged()
+                 * runs on the UI thread.
+                 */
+                @Override
+                public void run() {
+                    // Create a handle to the account that was created by
+                    // SyncService.CreateSyncAccount(). This will be used to query the system to
+                    // see how the sync status has changed.
+                    Account account = TumblrGenericAccountService.GetAccount(TumblrSyncUtils.ACCOUNT_TYPE);
+                    if (account == null) {
+                        // GetAccount() returned an invalid value. This shouldn't happen, but
+                        // we'll set the status to "not refreshing".
+                        setRefreshActionButtonState(false);
+                        return;
+                    }
+
+                    // Test the ContentResolver to see if the sync adapter is active or pending.
+                    // Set the state of the refresh button accordingly.
+                    boolean syncActive = ContentResolver.isSyncActive(
+                            account, GallaryDataBaseContract.GALLERY_AUTHORITY);
+                    boolean syncPending = ContentResolver.isSyncPending(
+                            account, GallaryDataBaseContract.GALLERY_AUTHORITY);
+                    setRefreshActionButtonState(syncActive || syncPending);
+                }
+            });
+        }
+    };
+
+    public void setRefreshActionButtonState(boolean refreshing) {
+        if(refreshing){
+            syncProgressIndicator.setVisibility(View.VISIBLE);
+            refreshButton.setEnabled(false);
+        }else{
+            syncProgressIndicator.setVisibility(View.GONE);
+            refreshButton.setEnabled(true);
         }
     }
 }

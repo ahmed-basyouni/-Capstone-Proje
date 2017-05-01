@@ -33,6 +33,8 @@ public class GalleryDBHelper extends SQLiteOpenHelper {
                 + GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_ENABLED + " Integer,"
                 + GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_COUNT + " Integer,"
                 + GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_TYPE + " Integer,"
+                + GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_TUMBLR_BLOG_NAME + " TEXT,"
+                + GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_Five_PX_CATEGORY + " TEXT,"
                 + "UNIQUE (" + GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_NAME + ") ON CONFLICT REPLACE)");
     }
 

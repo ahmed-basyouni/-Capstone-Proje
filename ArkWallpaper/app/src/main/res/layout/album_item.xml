@@ -1,93 +1,127 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/viewsHolder"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/cardView_margin"
-    android:elevation="@dimen/default_elevation"
-    android:id="@+id/viewsHolder">
+    android:elevation="@dimen/default_elevation">
 
     <ImageView
+        android:id="@+id/albumImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:id="@+id/albumImage"/>
+        android:scaleType="centerCrop" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:elevation="@dimen/default_elevation"
         android:background="@color/elevated_info"
+        android:elevation="@dimen/default_elevation"
         android:orientation="horizontal">
 
         <CheckBox
+            android:id="@+id/albumEnabled"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/albumEnabled"
             android:buttonTint="@color/colorAccent"
-            android:padding="@dimen/smallPadding"/>
+            android:padding="@dimen/smallPadding" />
 
         <TextView
+            android:id="@+id/albumName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/text_secondary"
             android:padding="@dimen/smallPadding"
-            android:id="@+id/albumName"/>
-        
+            android:textColor="@color/text_secondary" />
+
         <TextView
+            android:id="@+id/albumCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/text_secondary"
-            android:id="@+id/albumCount"
             android:padding="@dimen/smallPadding"
-            android:text="@string/albumCount"/>
+            android:text="@string/albumCount"
+            android:textColor="@color/text_secondary" />
 
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/selectedView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:weightSum="3"
-        android:orientation="horizontal"
         android:background="@color/selectedColorAccent"
-        android:id="@+id/selectedView"
         android:clickable="true"
+        android:gravity="center"
+        android:orientation="vertical"
         android:visibility="gone">
 
         <TextView
+            android:id="@+id/playAlbum"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/edit"
-            android:layout_weight="1"
+            android:drawablePadding="@dimen/smallPadding"
+            android:layout_margin="@dimen/cardView_margin"
+            android:drawableTop="@drawable/ic_play_arrow_white_24dp"
             android:gravity="center"
-            android:id="@+id/editAlbum"
-            android:drawableTop="@drawable/ic_edit_white_24dp"
-            android:textColor="@android:color/white"
-            android:drawablePadding="@dimen/smallPadding"/>
+            android:text="@string/select"
+            android:textColor="@android:color/white" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/delete"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:id="@+id/deleteAlbum"
-            android:drawableTop="@drawable/ic_delete_forever_white_24dp"
-            android:textColor="@android:color/white"
-            android:drawablePadding="@dimen/smallPadding"/>
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@android:string/cancel"
-            android:layout_weight="1"
             android:gravity="center"
-            android:id="@+id/hideSelectedView"
-            android:drawableTop="@drawable/ic_close_white_24dp"
-            android:textColor="@android:color/white"
-            android:drawablePadding="@dimen/smallPadding"/>
+            android:orientation="horizontal"
+            android:weightSum="3">
+
+            <TextView
+                android:id="@+id/editAlbum"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawablePadding="@dimen/smallPadding"
+                android:drawableTop="@drawable/ic_edit_white_24dp"
+                android:gravity="center"
+                android:text="@string/edit"
+                android:textColor="@android:color/white" />
+
+            <TextView
+                android:id="@+id/deleteAlbum"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawablePadding="@dimen/smallPadding"
+                android:drawableTop="@drawable/ic_delete_forever_white_24dp"
+                android:gravity="center"
+                android:text="@string/delete"
+                android:textColor="@android:color/white" />
+
+            <TextView
+                android:id="@+id/hideSelectedView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawablePadding="@dimen/smallPadding"
+                android:drawableTop="@drawable/ic_close_white_24dp"
+                android:gravity="center"
+                android:text="@android:string/cancel"
+                android:textColor="@android:color/white" />
+
+        </LinearLayout>
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/syncText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="@string/Syncung"
+        android:textColor="@color/text_secondary"
+        android:textSize="@dimen/textSizeLarge"
+        android:textStyle="bold"
+        android:visibility="gone"
+        tools:text="Syncing....." />
 
 </android.support.v7.widget.CardView>

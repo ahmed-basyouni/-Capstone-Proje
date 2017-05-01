@@ -27,7 +27,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
-public class GenericAccountService extends Service {
+public class FivePxGenericAccountService extends Service {
     private static final String TAG = "GenericAccountService";
     public static final String ACCOUNT_NAME = "Account";
     private Authenticator mAuthenticator;
@@ -37,11 +37,11 @@ public class GenericAccountService extends Service {
      * <p>
      * <p>It is important that the accountType specified here matches the value in your sync adapter
      * configuration XML file for android.accounts.AccountAuthenticator (often saved in
-     * res/xml/syncadapter.xml). If this is not set correctly, you'll receive an error indicating
-     * that "caller uid XXXXX is different than the authenticator's uid".
+     * res/xml/fivepx_syncadapteradapter.xml). If this is not set correctly, you'll receive an error indicating
+     * that "caller uid XXXXX is different than the fivepx_authenticator's uid".
      *
      * @param accountType AccountType defined in the configuration XML file for
-     *                    android.accounts.AccountAuthenticator (e.g. res/xml/syncadapter.xml).
+     *                    android.accounts.AccountAuthenticator (e.g. res/xml/fivepx_syncadapter.xmlter.xml).
      * @return Handle to application's account (not guaranteed to resolve unless CreateSyncAccount()
      * has been called)
      */

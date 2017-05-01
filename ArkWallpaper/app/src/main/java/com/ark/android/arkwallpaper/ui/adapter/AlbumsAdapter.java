@@ -3,9 +3,11 @@ package com.ark.android.arkwallpaper.ui.adapter;
 import android.animation.Animator;
 import android.app.Activity;
 import android.app.ActivityOptions;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -32,10 +34,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ark.android.arkwallpaper.R;
+import com.ark.android.arkwallpaper.WallpaperApp;
 import com.ark.android.arkwallpaper.data.model.AlbumObject;
 import com.ark.android.arkwallpaper.presenter.contract.AlbumFragmentContract;
 import com.ark.android.arkwallpaper.ui.activity.AlbumActivity;
+import com.ark.android.arkwallpaper.utils.WallPaperUtils;
 import com.ark.android.arkwallpaper.utils.uiutils.GlideContentProviderLoader;
+import com.ark.android.gallerylib.data.GallaryDataBaseContract;
+import com.ark.android.onlinesourcelib.FiveHundredSyncAdapter;
+import com.ark.android.onlinesourcelib.FivePxSyncUtils;
+import com.ark.android.onlinesourcelib.TumblrSyncUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
@@ -43,6 +51,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import rx.functions.Action1;
 
 /**
  *
@@ -77,6 +86,24 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
     public void onBindViewHolder(final AlbumsViewHolder holder, int position) {
 
         final AlbumObject albumObject = albums.get(position);
+
+        if((albumObject.getType() == GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_PX || albumObject.getType() == GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_TUMBLR)
+                && albumObject.getAlbumImage().toString().equalsIgnoreCase("")){
+            holder.syncText.setVisibility(View.VISIBLE);
+            holder.albumImage.setVisibility(View.INVISIBLE);
+        }else{
+            holder.syncText.setVisibility(View.GONE);
+            holder.albumImage.setVisibility(View.VISIBLE);
+        }
+
+        holder.playAlbum.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                WallPaperUtils.changeAlbumBroadCast(albumObject.getAlbumName());
+                holder.selectedView.setVisibility(View.GONE);
+            }
+        });
+
         RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) holder.viewsHolder.getLayoutParams();
         params.height = this.height / 3;
         params.width = RecyclerView.LayoutParams.MATCH_PARENT;
@@ -94,7 +121,13 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
         holder.editAlbum.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showEditAlbumDialog(albumObject.getAlbumName());
+                if(albumObject.getType() == GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_GALLERY)
+                    showEditAlbumDialog(albumObject.getAlbumName());
+                else if(albumObject.getType() == GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_TUMBLR){
+                    editTumblrAlbum(albumObject);
+                }else{
+                    editFivePxAlbum(albumObject);
+                }
             }
         });
 
@@ -116,7 +149,10 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
 
         Glide.with(context)
                 .using(new GlideContentProviderLoader(context))
-                .load(albumObject.getAlbumImage())
+                .load(albumObject.getAlbumImage().toString().equalsIgnoreCase("") ?
+                        Uri.parse("android.resource://"+ WallpaperApp.getWallpaperApp().getPackageName() +"/drawable/bg3")
+                        : albumObject.getAlbumImage())
+                .asBitmap()
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .into(holder.albumImage);
 
@@ -139,6 +175,9 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
                 if(holder.selectedView.getVisibility() == View.GONE){
                     Intent i = new Intent(context,  AlbumActivity.class);
                     i.putExtra("albumName" , albumObject.getAlbumName());
+                    i.putExtra("tumblrBlog", albumObject.getTumblrBlogName());
+                    i.putExtra("fivePxCat", albumObject.getFivePxCategoryName());
+                    i.putExtra("type", albumObject.getType());
                     Bundle b = null;
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                         //b = ActivityOptions.makeScaleUpAnimation(view, 0, 0, view.getWidth(),
@@ -156,7 +195,7 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
 
             @Override
             public void onLongPress(MotionEvent e) {
-                if(holder.selectedView.getVisibility() == View.GONE) {
+                if(holder.selectedView.getVisibility() == View.GONE && holder.syncText.getVisibility() == View.GONE) {
                     super.onLongPress(e);
                     int x = (int) e.getX();
                     int y = (int) e.getY();
@@ -167,6 +206,10 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
                     Animator anim = ViewAnimationUtils.createCircularReveal(holder.selectedView, x, y, startRadius, endRadius);
 
                     holder.selectedView.setVisibility(View.VISIBLE);
+                    if(WallPaperUtils.getCurrentAlbum() != null && WallPaperUtils.getCurrentAlbum().equals(albumObject.getAlbumName()))
+                        holder.playAlbum.setVisibility(View.GONE);
+                    else
+                        holder.playAlbum.setVisibility(View.VISIBLE);
                     anim.start();
                 }
             }
@@ -178,6 +221,54 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
                 return gestureDetector.onTouchEvent(event);
             }
         });
+    }
+
+    private void editFivePxAlbum(final AlbumObject albumObject) {
+        Action1<String> action1 = new Action1<String>() {
+            @Override
+            public void call(String s) {
+                context.getContentResolver().delete(GallaryDataBaseContract.GalleryTable.CONTENT_URI
+                        , GallaryDataBaseContract.GalleryTable.COLUMN_ALBUM_NAME + " = ?" , new String[]{albumObject.getAlbumName()});
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_Five_PX_CATEGORY, s);
+                contentValues.put(GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_IMAGE_URI, "");
+                contentValues.put(GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_COUNT, 0);
+                WallpaperApp.getWallpaperApp().getContentResolver().update(GallaryDataBaseContract.AlbumsTable.CONTENT_URI, contentValues
+                        , GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_NAME + " = ?" , new String[]{albumObject.getAlbumName()});
+                Bundle bundle = new Bundle();
+                bundle.putString(FiveHundredSyncAdapter.CAT_KEY, s);
+                bundle.putBoolean("isPer", true);
+                FivePxSyncUtils.updatePeriodicSync(albumObject.getFivePxCategoryName(), s);
+                FivePxSyncUtils.TriggerRefresh(bundle);
+            }
+        };
+        iAlbumPresenter.showAdd500PxDialog(albumObject.getFivePxCategoryName(), action1);
+    }
+
+    private void editTumblrAlbum(final AlbumObject albumObject) {
+        Action1<String> action = new Action1<String>() {
+            @Override
+            public void call(String s) {
+                if(s != null){
+                    context.getContentResolver().delete(GallaryDataBaseContract.GalleryTable.CONTENT_URI
+                            , GallaryDataBaseContract.GalleryTable.COLUMN_ALBUM_NAME + " = ?" , new String[]{albumObject.getAlbumName()});
+                    ContentValues contentValues = new ContentValues();
+                    contentValues.put(GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_TUMBLR_BLOG_NAME, s);
+                    contentValues.put(GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_IMAGE_URI, "");
+                    contentValues.put(GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_COUNT, 0);
+                    WallpaperApp.getWallpaperApp().getContentResolver().update(GallaryDataBaseContract.AlbumsTable.CONTENT_URI, contentValues
+                            , GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_NAME + " = ?" , new String[]{albumObject.getAlbumName()});
+                    Bundle bundle = new Bundle();
+                    bundle.putString("albumObject", s);
+                    bundle.putBoolean("isPer", true);
+                    TumblrSyncUtils.updatePeriodicSync(albumObject.getTumblrBlogName(), s);
+                    TumblrSyncUtils.TriggerRefresh(bundle);
+                }else{
+                    Toast.makeText(context, context.getString(R.string.blogNotFound), Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
+        iAlbumPresenter.showEditTumblrDialog(albumObject.getTumblrBlogName(), action);
     }
 
     private void showDeleteDialog(final String albumName) {
@@ -244,6 +335,8 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
         @BindView(R.id.deleteAlbum) TextView deleteAlbum;
         @BindView(R.id.hideSelectedView) TextView hideSelectedView;
         @BindView(R.id.albumCount) TextView albumCount;
+        @BindView(R.id.syncText) TextView syncText;
+        @BindView(R.id.playAlbum) TextView playAlbum;
 
         AlbumsViewHolder(View itemView) {
             super(itemView);

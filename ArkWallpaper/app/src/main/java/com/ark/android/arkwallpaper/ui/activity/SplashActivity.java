@@ -3,13 +3,11 @@ package com.ark.android.arkwallpaper.ui.activity;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.app.ActivityOptions;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.transition.Fade;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.Window;
@@ -20,6 +18,7 @@ import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
 
 import com.ark.android.arkwallpaper.R;
+import com.ark.android.arkwallpaper.WallpaperObserverService;
 import com.ark.android.arkwallpaper.ui.customviews.AnimatedSvgView;
 import com.ark.android.arkwallpaper.utils.LogoPaths;
 import com.ark.android.arkwallpaper.utils.uiutils.GlideBlurringTransformation;
@@ -54,14 +53,6 @@ public class SplashActivity extends AppCompatActivity {
                 .bitmapTransform(new GlideBlurringTransformation(this))
                 .into(splashImageView);
         mLogoView = (AnimatedSvgView) findViewById(R.id.animated_logo);
-        mLogoView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(SplashActivity.this, HomeActivity.class));
-                SplashActivity.this.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                SplashActivity.this.finish();
-            }
-        });
         mLogoView.setGlyphStrings(LogoPaths.GLYPHS);
         Handler mHandler = new Handler();
         mLogoView.setOnStateChangeListener(new AnimatedSvgView.OnStateChangeListener() {
@@ -96,9 +87,9 @@ public class SplashActivity extends AppCompatActivity {
 
                         @Override
                         public void onAnimationEnd(Animator animation) {
-//                            startActivity(new Intent(SplashActivity.this, HomeActivity.class));
-//                            SplashActivity.this.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-//                            SplashActivity.this.finish();
+                            startActivity(new Intent(SplashActivity.this, HomeActivity.class).putExtra(HomeActivity.FROM_SPLASH, true));
+                            SplashActivity.this.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                            SplashActivity.this.finish();
                         }
 
                         @Override

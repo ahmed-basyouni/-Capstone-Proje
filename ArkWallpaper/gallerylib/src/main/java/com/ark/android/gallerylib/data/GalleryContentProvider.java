@@ -379,7 +379,7 @@ public class GalleryContentProvider extends ContentProvider {
         // chosen image files for each row being deleted. Instead we have to query
         // and manually delete each chosen image file
         String[] projection = new String[]{
-                GallaryDataBaseContract.GalleryTable.COLUMN_NAME_URI, GallaryDataBaseContract.GalleryTable.COLUMN_ALBUM_NAME};
+                GallaryDataBaseContract.GalleryTable.COLUMN_NAME_URI, GallaryDataBaseContract.GalleryTable.COLUMN_ALBUM_NAME, GallaryDataBaseContract.GalleryTable._ID};
         Cursor rowsToDelete = queryGalleyImages(uri, projection, selection, selectionArgs, null);
         if (rowsToDelete == null) {
             return 0;
@@ -391,26 +391,34 @@ public class GalleryContentProvider extends ContentProvider {
         }
         while (!rowsToDelete.isAfterLast()) {
             String imageUri = rowsToDelete.getString(0);
+            if(uri.toString().equals(GallaryDataBaseContract.GalleryTable.CONTENT_URI.toString())){
+                if(rowsToDelete.getInt(rowsToDelete.getColumnIndex(GallaryDataBaseContract.GalleryTable._ID)) != -1){
+                    String deletedImageUri = uri.toString() + "/" + rowsToDelete.getInt(rowsToDelete.getColumnIndex(GallaryDataBaseContract.GalleryTable._ID));
+                    notifyChange(Uri.parse(deletedImageUri));
+                }
+            }
             Uri uriToRelease = Uri.parse(imageUri);
             ContentResolver contentResolver = context.getContentResolver();
-            boolean haveUriPermission = context.checkUriPermission(uriToRelease,
-                    Binder.getCallingPid(), Binder.getCallingUid(),
-                    Intent.FLAG_GRANT_READ_URI_PERMISSION) == PackageManager.PERMISSION_GRANTED;
-            if (haveUriPermission) {
-                // Try to release any persisted URI permission for the imageUri
-                List<UriPermission> persistedUriPermissions = contentResolver.getPersistedUriPermissions();
-                for (UriPermission persistedUriPermission : persistedUriPermissions) {
-                    if (persistedUriPermission.getUri().equals(uriToRelease)) {
-                        contentResolver.releasePersistableUriPermission(
-                                uriToRelease, Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                        break;
+            if(ContentResolver.SCHEME_CONTENT.equals(uriToRelease.getScheme())) {
+                boolean haveUriPermission = context.checkUriPermission(uriToRelease,
+                        Binder.getCallingPid(), Binder.getCallingUid(),
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION) == PackageManager.PERMISSION_GRANTED;
+                if (haveUriPermission) {
+                    // Try to release any persisted URI permission for the imageUri
+                    List<UriPermission> persistedUriPermissions = contentResolver.getPersistedUriPermissions();
+                    for (UriPermission persistedUriPermission : persistedUriPermissions) {
+                        if (persistedUriPermission.getUri().equals(uriToRelease)) {
+                            contentResolver.releasePersistableUriPermission(
+                                    uriToRelease, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                            break;
+                        }
                     }
+                } else {
+                    // On API 25 and lower, we don't get URI permissions to URIs
+                    // from our own package so we manage those URI permissions manually
+                    contentResolver.call(uriToRelease, "releasePersistableUriPermission",
+                            uriToRelease.toString(), null);
                 }
-            } else {
-                // On API 25 and lower, we don't get URI permissions to URIs
-                // from our own package so we manage those URI permissions manually
-                contentResolver.call(uriToRelease, "releasePersistableUriPermission",
-                        uriToRelease.toString(), null);
             }
             rowsToDelete.moveToNext();
         }
@@ -436,8 +444,8 @@ public class GalleryContentProvider extends ContentProvider {
         Cursor rowsToDelete = queryGalleyImages(GallaryDataBaseContract.GalleryTable.CONTENT_URI, projection
                 , GallaryDataBaseContract.GalleryTable.COLUMN_ALBUM_NAME + " = ?", new String[]{albumName}, null);
         ContentValues contentValues = new ContentValues();
-        if (rowsToDelete == null) {
-            contentValues.put(GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_IMAGE_URI, "android.resource://drawable/bg3");
+        if (rowsToDelete == null || rowsToDelete.getCount() == 0) {
+            contentValues.put(GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_IMAGE_URI, "");
         }else if(rowsToDelete.getCount() > 0){
             rowsToDelete.moveToPosition(0);
             contentValues.put(GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_IMAGE_URI, rowsToDelete.getString(rowsToDelete.getColumnIndex(GallaryDataBaseContract.GalleryTable.COLUMN_NAME_URI)));
@@ -524,6 +532,10 @@ public class GalleryContentProvider extends ContentProvider {
                 GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_TYPE);
         allColumnProjectionMap.put(GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_COUNT,
                 GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_COUNT);
+        allColumnProjectionMap.put(GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_TUMBLR_BLOG_NAME,
+                GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_TUMBLR_BLOG_NAME);
+        allColumnProjectionMap.put(GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_Five_PX_CATEGORY,
+                GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_Five_PX_CATEGORY);
         return allColumnProjectionMap;
     }
 }
