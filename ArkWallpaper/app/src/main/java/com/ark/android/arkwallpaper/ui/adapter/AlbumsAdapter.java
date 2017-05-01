@@ -259,7 +259,7 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
                     WallpaperApp.getWallpaperApp().getContentResolver().update(GallaryDataBaseContract.AlbumsTable.CONTENT_URI, contentValues
                             , GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_NAME + " = ?" , new String[]{albumObject.getAlbumName()});
                     Bundle bundle = new Bundle();
-                    bundle.putString("albumObject", s);
+                    bundle.putString("albumName", s);
                     bundle.putBoolean("isPer", true);
                     TumblrSyncUtils.updatePeriodicSync(albumObject.getTumblrBlogName(), s);
                     TumblrSyncUtils.TriggerRefresh(bundle);
