@@ -41,12 +41,15 @@ import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
+import android.widget.Toast;
 
 import com.ark.android.arkwallpaper.utils.WallPaperUtils;
 import com.ark.android.arkwallpaper.utils.uiutils.BitmapUtil;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+
+import static com.ark.android.arkwallpaper.Constants.*;
 
 public class WallpaperSlideshow extends WallpaperService {
 
@@ -133,6 +136,7 @@ public class WallpaperSlideshow extends WallpaperService {
                 public boolean onDoubleTap(MotionEvent e) {
                     if (mTouchEvents) {
                         mLastDrawTime = 0;
+                        showNotificationToast();
                         drawFrame();
                         return true;
                     }
@@ -144,9 +148,10 @@ public class WallpaperSlideshow extends WallpaperService {
         BroadcastReceiver changeWallpaperReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if(intent.getBooleanExtra(WallPaperUtils.FORCE_UPDATE, false)){
+                showNotificationToast();
+                if(intent.getBooleanExtra(FORCE_UPDATE, false)){
                     movie = null;
-                    mBitmapPath = intent.getStringExtra(WallPaperUtils.FORCE_UPDATE_URI);
+                    mBitmapPath = intent.getStringExtra(FORCE_UPDATE_URI);
                     WallPaperUtils.changeCurrentWallpaperId(mBitmapPath);
                     if(mBitmap != null)
                         mBitmap.recycle();
@@ -161,6 +166,7 @@ public class WallpaperSlideshow extends WallpaperService {
         BroadcastReceiver changeAlbumReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                showNotificationToast();
                 mLastDrawTime = 0;
                 drawFrame();
             }
@@ -170,6 +176,22 @@ public class WallpaperSlideshow extends WallpaperService {
         public void onCreate(SurfaceHolder surfaceHolder) {
             super.onCreate(surfaceHolder);
 
+            if(!isPreview()) {
+                WallPaperUtils.setLiveWallpaperIsRunning(true);
+                registerReceiver(changeWallpaperReceiver, new IntentFilter(CHANGE_CURRENT_WALLPAPER_ACTION));
+                registerReceiver(changeAlbumReceiver, new IntentFilter(CHANGE_CURRENT_ALBUM_ACTION));
+                // Register receiver for screen on events
+                registerReceiver(new BroadcastReceiver() {
+                    @Override
+                    public void onReceive(Context context, Intent intent) {
+                        System.out.println(Intent.ACTION_SCREEN_ON);
+                        if (mScreenWake) {
+                            mLastDrawTime = 0;
+                            drawFrame();
+                        }
+                    }
+                }, new IntentFilter(Intent.ACTION_SCREEN_ON));
+            }
             // Register receiver for media events
             IntentFilter filter = new IntentFilter();
             filter.addAction(Intent.ACTION_MEDIA_BAD_REMOVAL);
@@ -199,21 +221,6 @@ public class WallpaperSlideshow extends WallpaperService {
             };
             registerReceiver(mReceiver, filter);
 
-            registerReceiver(changeWallpaperReceiver, new IntentFilter(WallPaperUtils.CHANGE_CURRENT_WALLPAPER_ACTION));
-            registerReceiver(changeAlbumReceiver, new IntentFilter(WallPaperUtils.CHANGE_CURRENT_ALBUM_ACTION));
-
-            // Register receiver for screen on events
-            registerReceiver(new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    System.out.println(Intent.ACTION_SCREEN_ON);
-                    if (mScreenWake) {
-                        mLastDrawTime = 0;
-                        drawFrame();
-                    }
-                }
-            }, new IntentFilter(Intent.ACTION_SCREEN_ON));
-
     		/* mStorageReady = (Environment.getExternalStorageState() ==
                 Environment.MEDIA_MOUNTED || Environment.getExternalStorageState() ==
         			Environment.MEDIA_CHECKING); */
@@ -223,9 +230,9 @@ public class WallpaperSlideshow extends WallpaperService {
         @Override
         public void onDestroy() {
             super.onDestroy();
+            if(!isPreview())
+                WallPaperUtils.setLiveWallpaperIsRunning(false);
             mHandler.removeCallbacks(mWorker);
-            unregisterReceiver(changeWallpaperReceiver);
-            unregisterReceiver(changeAlbumReceiver);
         }
 
         @Override
@@ -739,6 +746,10 @@ public class WallpaperSlideshow extends WallpaperService {
             return dest;
         }
 
+    }
+
+    private void showNotificationToast() {
+        Toast.makeText(this, getString(R.string.changeWallpaper), Toast.LENGTH_SHORT).show();
     }
 
     class NoImagesInFolderException extends Exception {

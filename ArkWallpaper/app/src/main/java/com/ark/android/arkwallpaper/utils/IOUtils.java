@@ -8,10 +8,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
+ * A utility class that can be used to copy image from internal storage to sdcard
+ * used for saving image function
  * Created by ahmed-basyouni on 5/1/17.
  */
 
@@ -32,14 +32,15 @@ public class IOUtils {
 
         File dst = new File(DESTINATION_FOLDER + File.separator + src.getName());
 
-        FileChannel inChannel = null;
-        FileChannel outChannel = null;
+        FileChannel inChannel;
+        FileChannel outChannel;
 
         try {
             inChannel = new FileInputStream(src).getChannel();
             outChannel = new FileOutputStream(dst).getChannel();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+            return null;
         }
 
         try {

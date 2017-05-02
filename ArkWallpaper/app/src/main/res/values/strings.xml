@@ -30,6 +30,15 @@
     <string name="select">select album</string>
     <string name="setAsWallpaper">Set as wallpaper</string>
     <string name="downloadFile">Download</string>
+    <string name="changeWallpaper">Change Wallpaper</string>
+    <string name="imageSaved">Image Saved</string>
+    <string name="ArkWallpaperIsNotActive">Set the app as your live wallpaper in order to use it. Click here to do so</string>
+    <string name="lastWallpaper">last Chosen image</string>
+    <string name="changeEvery">Change wallpaper every</string>
+    <string name="defaultChangeValue">30</string>
+    <string name="changeWithUnlock">Change wallpaper on unlock screen</string>
+    <string name="changeWithDoubleTap">Change Wallpaper with double tap</string>
+    <string name="changeValueIsEmpty">Please enter a valid value</string>
 
     <string-array name="fivePx_Cat">
         <item>All</item>
@@ -43,6 +52,12 @@
         <item>Landscapes</item>
         <item>Macro</item>
         <item>Nature</item>
+    </string-array>
+
+    <string-array name="change_unit">
+        <item>Minutes</item>
+        <item>hours</item>
+        <item>days</item>
     </string-array>
 
 </resources>

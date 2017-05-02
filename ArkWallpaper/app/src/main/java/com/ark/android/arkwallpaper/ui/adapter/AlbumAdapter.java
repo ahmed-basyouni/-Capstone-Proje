@@ -20,6 +20,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ark.android.arkwallpaper.R;
 import com.ark.android.arkwallpaper.ui.activity.AlbumActivity;
@@ -167,6 +168,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder>
             public void onClick(View v) {
                 try {
                     IOUtils.exportFile(new File(imageResId.getPath()));
+                    Toast.makeText(mContext, mContext.getString(R.string.imageSaved), Toast.LENGTH_SHORT).show();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

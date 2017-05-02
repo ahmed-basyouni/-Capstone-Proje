@@ -1,6 +1,8 @@
 package com.ark.android.arkwallpaper.utils;
 
 import android.app.ActivityManager;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,32 +12,18 @@ import android.preference.PreferenceManager;
 
 import com.ark.android.arkwallpaper.WallpaperApp;
 import com.ark.android.arkwallpaper.WallpaperObserverService;
-import com.ark.android.arkwallpaper.WallpaperSlideshow;
-import com.ark.android.arkwallpaper.data.manager.InternalFileSaveDataLayer;
-import com.ark.android.arkwallpaper.data.model.WallPaperObject;
 import com.ark.android.gallerylib.data.GallaryDataBaseContract;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
+import static com.ark.android.arkwallpaper.Constants.*;
+
 /**
+ *
  * Created by ahmed-basyouni on 4/30/17.
  */
 
 public class WallPaperUtils {
-
-    public static final String CURRENT_ALBUM_KEY = "com.ark.android.arkwallpaper.utils.currentAlbumKey";
-    public static final String CURRENT_WALLPAPER_KEY = "com.ark.android.arkwallpaper.utils.currentWallpaperKey";
-    public static final String CURRENT_WALLPAPER_ID_KEY =
-            "com.ark.android.arkwallpaper.utils.currentWallpaperIdKey";
-    public static final String WALLPAPER_ALBUM_ID =
-            "com.ark.android.arkwallpaper.utils.currentAlbumIdKey";
-    public static final String CHANGE_CURRENT_WALLPAPER_ACTION = "com.ark.android.arkwallpaper.utils.changeCurrentWallpaper";
-    public static final String FORCE_UPDATE = "com.ark.android.arkwallpaper.utils.foceUpdate";
-    public static final String FORCE_UPDATE_URI = "com.ark.android.arkwallpaper.utils.forceUpdateUri";
-    public static final String CHANGE_CURRENT_ALBUM_ACTION = "com.ark.android.arkwallpaper.utils.changeCurrentAlbum";
 
     public static String getCurrentAlbum() {
         return getSharedPreferences()
@@ -131,18 +119,12 @@ public class WallPaperUtils {
     }
 
     public static boolean isLiveWallpaperActive() {
-        ActivityManager manager = (ActivityManager) WallpaperApp.getWallpaperApp()
-                .getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (WallpaperSlideshow.class.getName().equals(service.service.getClassName())) {
-                return true;
-            }
-        }
-        return false;
+        return getSharedPreferences()
+                .getBoolean(WALLPAPER_IS_RUNNING, false);
     }
 
     public static void changeWallpaperBroadCast(String forceUri){
-        Intent intent = new Intent(WallPaperUtils.CHANGE_CURRENT_WALLPAPER_ACTION);
+        Intent intent = new Intent(CHANGE_CURRENT_WALLPAPER_ACTION);
         if(forceUri != null){
             intent.putExtra(FORCE_UPDATE, true);
             intent.putExtra(FORCE_UPDATE_URI, forceUri);
@@ -152,7 +134,7 @@ public class WallPaperUtils {
     }
 
     public static void changeAlbumBroadCast(String albumName){
-        Intent intent = new Intent(WallPaperUtils.CHANGE_CURRENT_ALBUM_ACTION);
+        Intent intent = new Intent(CHANGE_CURRENT_ALBUM_ACTION);
         setCurrentAlbum(albumName);
         WallpaperApp.getWallpaperApp().sendBroadcast(intent);
     }
@@ -167,4 +149,85 @@ public class WallPaperUtils {
         }
         return false;
     }
+
+    public static void setLiveWallpaperIsRunning(boolean running) {
+        SharedPreferences sharedPreferences = getSharedPreferences();
+        sharedPreferences.edit().putBoolean(WALLPAPER_IS_RUNNING, running).apply();
+    }
+
+    public static void setChangeWithDoubleTap(boolean isChecked) {
+        SharedPreferences sharedPreferences = getSharedPreferences();
+        sharedPreferences.edit().putBoolean(CHANGE_WITH_DOUBLE_TAP_KEY, isChecked).apply();
+    }
+
+    public static boolean isChangedWithDoubleTap(){
+        return getSharedPreferences().getBoolean(CHANGE_WITH_DOUBLE_TAP_KEY, false);
+    }
+
+
+    public static void setChangeWithUnlock(boolean isChecked) {
+        SharedPreferences sharedPreferences = getSharedPreferences();
+        sharedPreferences.edit().putBoolean(CHANGE_WITH_UNLOCK_KEY, isChecked).apply();
+    }
+
+    public static boolean isChangeWithUnlock(){
+        return getSharedPreferences().getBoolean(CHANGE_WITH_UNLOCK_KEY, false);
+    }
+
+    private static void setChangeWithInterval(boolean isChecked) {
+        SharedPreferences sharedPreferences = getSharedPreferences();
+        sharedPreferences.edit().putBoolean(CHANGE_WITH_INTERVAL_KEY, isChecked).apply();
+        if(!isChecked)
+            cancelAlarm();
+    }
+
+    private static void cancelAlarm() {
+        AlarmManager manager = (AlarmManager) WallpaperApp.getWallpaperApp().getSystemService(Context.ALARM_SERVICE);
+        manager.cancel(getAlarmPendingIntent());
+    }
+
+    public static boolean isChangeWithInterval(){
+        return getSharedPreferences().getBoolean(CHANGE_WITH_INTERVAL_KEY, false);
+    }
+
+    public static void setChangeInterval(int interval, INTERVAL_MODE mode){
+        SharedPreferences sharedPreferences = getSharedPreferences();
+        sharedPreferences.edit().putLong(CHANGE_WITH_INTERVAL_KEY, interval * mode.getValue()).apply();
+        setChangeWithInterval(true);
+        setChangeWallpaperUnit(mode);
+        setChangeWallpaperInterval(interval);
+        updateChangeAlarm(interval * mode.getValue());
+    }
+
+    public static int getChangeWallpaperUnit(){
+        return getSharedPreferences().getInt(CHANGE_Unit_KEY, 0);
+    }
+
+    private static void setChangeWallpaperUnit(INTERVAL_MODE mode) {
+        SharedPreferences sharedPreferences = getSharedPreferences();
+        sharedPreferences.edit().putInt(CHANGE_Unit_KEY, mode.ordinal()).apply();
+    }
+
+    public static int getChangeWallpaperInterval(){
+        return getSharedPreferences().getInt(CHANGE_INTERVAL_KEY, 30);
+    }
+
+    private static void setChangeWallpaperInterval(int interval) {
+        SharedPreferences sharedPreferences = getSharedPreferences();
+        sharedPreferences.edit().putInt(CHANGE_INTERVAL_KEY, interval).apply();
+    }
+
+    private static void updateChangeAlarm(long interval) {
+        AlarmManager manager = (AlarmManager) WallpaperApp.getWallpaperApp().getSystemService(Context.ALARM_SERVICE);
+        cancelAlarm();
+        manager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + interval,
+                interval , getAlarmPendingIntent());
+    }
+
+    private static PendingIntent getAlarmPendingIntent() {
+        Intent alarmIntent = new Intent(CHANGE_CURRENT_WALLPAPER_ACTION);
+        return PendingIntent.getBroadcast(WallpaperApp.getWallpaperApp(), ALARM_ID, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+
 }

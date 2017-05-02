@@ -50,11 +50,13 @@ import butterknife.ButterKnife;
 import rx.functions.Action1;
 
 /**
+ *
  * Created by ahmed-basyouni on 4/22/17.
  */
 
 public class AlbumsFragment extends Fragment implements
-        HomeContract.OnHomePagerChange, AlbumFragmentContract.IAlbumsView, LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
+        HomeContract.OnHomePagerChange, AlbumFragmentContract.IAlbumsView
+        , LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
 
     @BindView(R.id.albumsList)
     RecyclerView albumList;
@@ -76,12 +78,13 @@ public class AlbumsFragment extends Fragment implements
     TextView addTumblrText;
     @BindView(R.id.addFiveText)
     TextView addFiveText;
+    @BindView(R.id.addAlbumText)
+    TextView addAlbumText;
 
     private AlbumsPresenter albumsPresenter;
     int count = 0;
     private static final int LOADER_ID = 214;
     private Animation fabOpen;
-    private Animation fabContainerOpen;
     private Animation fabClose;
     private Animation rotateForward;
     private Animation rotateBackward;
@@ -100,7 +103,6 @@ public class AlbumsFragment extends Fragment implements
         getActivity().getSupportLoaderManager().initLoader(LOADER_ID, null, this);
 
         fabOpen = AnimationUtils.loadAnimation(getActivity(), R.anim.fab_open);
-        fabContainerOpen = AnimationUtils.loadAnimation(getActivity(), R.anim.fab_container_open);
         fabClose = AnimationUtils.loadAnimation(getActivity(), R.anim.fab_close);
         rotateForward = AnimationUtils.loadAnimation(getActivity(), R.anim.rotate_forward);
         rotateBackward = AnimationUtils.loadAnimation(getActivity(), R.anim.rotate_backward);
@@ -286,6 +288,7 @@ public class AlbumsFragment extends Fragment implements
                 break;
             case R.id.addFive:
                 showAdd500PxDialog(0, null);
+                animateFAB();
                 break;
         }
     }
@@ -323,9 +326,9 @@ public class AlbumsFragment extends Fragment implements
 
         if (isFabOpen) {
             floatingMenu.startAnimation(rotateBackward);
-            addFiveContainer.startAnimation(fabClose);
-            addAlbumContainer.startAnimation(fabClose);
-            addTumblrContainer.startAnimation(fabClose);
+            addFiveText.animate().setDuration(300).alpha(0);
+            addTumblrText.animate().setDuration(300).alpha(0);
+            addAlbumText.animate().setDuration(300).alpha(0);
             add500px.startAnimation(fabClose);
             addAlbum.startAnimation(fabClose);
             addtumblr.startAnimation(fabClose);
@@ -335,9 +338,9 @@ public class AlbumsFragment extends Fragment implements
             isFabOpen = false;
         } else {
             floatingMenu.startAnimation(rotateForward);
-            addFiveContainer.startAnimation(fabContainerOpen);
-            addTumblrContainer.startAnimation(fabContainerOpen);
-            addAlbumContainer.startAnimation(fabContainerOpen);
+            addFiveText.animate().setDuration(300).alpha(1);
+            addTumblrText.animate().setDuration(300).alpha(1);
+            addAlbumText.animate().setDuration(300).alpha(1);
             add500px.startAnimation(fabOpen);
             addAlbum.startAnimation(fabOpen);
             addtumblr.startAnimation(fabOpen);

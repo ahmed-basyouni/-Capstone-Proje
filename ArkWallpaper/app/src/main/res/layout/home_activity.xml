@@ -39,18 +39,27 @@
 
         </android.support.design.widget.AppBarLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/snackContainer"
-            android:orientation="vertical"/>
+            <TextView
+                android:id="@+id/warningText"
+                android:background="@color/colorAccent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:onClick="setLiveWallpaper"
+                android:textColor="@android:color/white"
+                android:padding="@dimen/smallPadding"
+                android:drawablePadding="@dimen/smallPadding"
+                android:drawableLeft="@drawable/ic_warning_white_24dp"
+                android:text="@string/ArkWallpaperIsNotActive"/>
+
 
 
         <android.support.v4.view.ViewPager
             android:id="@+id/homePager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="center" />
+            android:layout_gravity="center"
+            />
 
 
     </LinearLayout>
