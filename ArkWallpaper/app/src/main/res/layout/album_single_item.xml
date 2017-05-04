@@ -8,7 +8,7 @@
     <ImageView
         android:id="@+id/albumSingleImage"
         android:layout_width="match_parent"
-        android:transitionName="@string/album_single_image"
+        android:transitionName="@string/expandedImageView"
         android:layout_height="match_parent"
         android:scaleType="centerCrop" />
 

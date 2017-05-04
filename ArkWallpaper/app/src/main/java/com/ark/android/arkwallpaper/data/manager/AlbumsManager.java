@@ -12,7 +12,12 @@ import android.support.v4.content.Loader;
 import com.ark.android.arkwallpaper.WallpaperApp;
 import com.ark.android.arkwallpaper.data.model.AlbumObject;
 import com.ark.android.arkwallpaper.presenter.contract.AlbumFragmentContract;
+import com.ark.android.arkwallpaper.utils.WallPaperUtils;
 import com.ark.android.gallerylib.data.GallaryDataBaseContract;
+import com.ark.android.onlinesourcelib.FiveHundredSyncAdapter;
+import com.ark.android.onlinesourcelib.FivePxSyncUtils;
+import com.ark.android.onlinesourcelib.TumblrSyncAdapter;
+import com.ark.android.onlinesourcelib.TumblrSyncUtils;
 
 import java.util.List;
 
@@ -37,6 +42,7 @@ public class AlbumsManager implements AlbumFragmentContract.IAlbumsModel{
 
     @Override
     public void deleteAlbum(String albumName) {
+        WallPaperUtils.checkDeletedAlbum(albumName);
         WallpaperApp.getWallpaperApp().getContentResolver().delete(GallaryDataBaseContract.AlbumsTable.CONTENT_URI
                 , GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_NAME + " = ?" , new String[]{albumName});
     }

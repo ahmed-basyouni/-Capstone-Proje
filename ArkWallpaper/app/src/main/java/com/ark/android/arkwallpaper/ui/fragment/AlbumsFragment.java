@@ -318,6 +318,7 @@ public class AlbumsFragment extends Fragment implements
         bundle.putBoolean("isPer", true);
         albumsPresenter.addAlbum(FiveHundredSyncAdapter.ALBUM_NAME, GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_PX, s, null);
         if (!FivePxSyncUtils.CreateSyncAccount(getActivity(), bundle)) {
+            FivePxSyncUtils.addPeriodicSync(bundle);
             FivePxSyncUtils.TriggerRefresh(bundle);
         }
     }

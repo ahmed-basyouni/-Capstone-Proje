@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent">
+
+    <ImageView
+        android:id="@+id/expandedImageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:transitionName="@string/expandedImageView"
+        android:background="@color/expanded_image_bg"/>
+
+    <ProgressBar
+        android:id="@+id/progressbar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:visibility="gone"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:transitionName="@string/album_single_image_info"
+        android:weightSum="3"
+        android:background="@color/expanded_image_bg"
+        android:layout_gravity="bottom">
+
+        <TextView
+            android:id="@+id/setAsWallpaper"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawableTop="@drawable/ic_check_white_24dp"
+            android:text="@string/setAsWallpaper"
+            android:padding="@dimen/smallPadding"
+            android:visibility="gone"
+            android:clickable="true"
+            android:textColor="@android:color/white"
+            android:gravity="center"/>
+
+        <TextView
+            android:id="@+id/downloadImage"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:drawableTop="@drawable/ic_file_download_white_24dp"
+            android:text="@string/downloadFile"
+            android:padding="@dimen/smallPadding"
+            android:visibility="gone"
+            android:clickable="true"
+            android:textColor="@android:color/white"
+            android:gravity="center"/>
+
+        <TextView
+            android:id="@+id/deleteImage"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:drawableTop="@drawable/ic_delete_white_24dp"
+            android:text="@string/downloadFile"
+            android:padding="@dimen/smallPadding"
+            android:visibility="gone"
+            android:clickable="true"
+            android:textColor="@android:color/white"
+            android:gravity="center"/>
+
+    </LinearLayout>
+
+</FrameLayout>

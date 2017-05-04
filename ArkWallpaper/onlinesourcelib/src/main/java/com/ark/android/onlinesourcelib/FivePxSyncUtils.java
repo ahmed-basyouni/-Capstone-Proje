@@ -63,7 +63,7 @@ public class FivePxSyncUtils {
     }
 
     public static void updatePeriodicSync(String oldCat, String newCat){
-        Account account = TumblrGenericAccountService.GetAccount(ACCOUNT_TYPE);
+        Account account = FivePxGenericAccountService.GetAccount(ACCOUNT_TYPE);
         Bundle bundle = new Bundle();
         bundle.putString(FiveHundredSyncAdapter.CAT_KEY , oldCat);
         bundle.putBoolean("isPer", true);
@@ -73,6 +73,20 @@ public class FivePxSyncUtils {
         newBundle.putBoolean("isPer", true);
         ContentResolver.addPeriodicSync(
                 account, CONTENT_AUTHORITY, newBundle,SYNC_FREQUENCY);
+    }
+
+    public static void addPeriodicSync(Bundle bundle){
+        Account account = FivePxGenericAccountService.GetAccount(ACCOUNT_TYPE);
+        ContentResolver.addPeriodicSync(
+                account, CONTENT_AUTHORITY, bundle,SYNC_FREQUENCY);
+    }
+
+    public static void removePeriodicSync(String oldCat){
+        Account account = FivePxGenericAccountService.GetAccount(ACCOUNT_TYPE);
+        Bundle bundle = new Bundle();
+        bundle.putString(FiveHundredSyncAdapter.CAT_KEY , oldCat);
+        bundle.putBoolean("isPer", true);
+        ContentResolver.removePeriodicSync(account, CONTENT_AUTHORITY, bundle);
     }
 
 

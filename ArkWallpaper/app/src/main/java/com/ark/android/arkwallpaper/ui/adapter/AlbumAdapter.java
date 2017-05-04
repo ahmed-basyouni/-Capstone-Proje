@@ -5,9 +5,13 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.net.Uri;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
@@ -24,6 +28,7 @@ import android.widget.Toast;
 
 import com.ark.android.arkwallpaper.R;
 import com.ark.android.arkwallpaper.ui.activity.AlbumActivity;
+import com.ark.android.arkwallpaper.ui.activity.LastImageInfoActivity;
 import com.ark.android.arkwallpaper.utils.IOUtils;
 import com.ark.android.arkwallpaper.utils.WallPaperUtils;
 import com.ark.android.arkwallpaper.utils.uiutils.GlideContentProviderLoader;
@@ -111,7 +116,12 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder>
         holder.albumSingleImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                zoomImageFromThumb(holder.albumSingleImage,images.get(holder.getAdapterPosition()));
+                Intent intent = new Intent(mContext, LastImageInfoActivity.class);
+                intent.putExtra(LastImageInfoActivity.IMAGE_URI,images.get(holder.getAdapterPosition()).toString());
+                ActivityOptionsCompat options = ActivityOptionsCompat.
+                        makeSceneTransitionAnimation(mContext, holder.albumSingleImage , mContext.getString(R.string.expandedImageView));
+//                mContext.startActivity(intent, options.toBundle());
+                ActivityCompat.startActivityForResult(mContext, intent, LastImageInfoActivity.REQUEST_ID, options.toBundle());
             }
         });
     }
@@ -155,6 +165,8 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder>
         final TextView setAsWallpaper = (TextView) mContext.findViewById(R.id.setAsWallpaper);
 
         final TextView downloadImage = (TextView) mContext.findViewById(R.id.downloadImage);
+
+        final TextView deleteImage = (TextView) mContext.findViewById(R.id.deleteImage);
 
         setAsWallpaper.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -239,9 +251,10 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder>
         // thumbnail.
         thumbView.setAlpha(0f);
         expandedImageView.setVisibility(View.VISIBLE);
-        largeContainer.setVisibility(View.GONE);
+        largeContainer.setVisibility(View.VISIBLE);
         setAsWallpaper.setVisibility(View.VISIBLE);
         downloadImage.setVisibility(View.VISIBLE);
+        deleteImage.setVisibility(View.VISIBLE);
         mContext.findViewById(R.id.floatingMenu).setVisibility(View.GONE);
         // Set the pivot point for SCALE_X and SCALE_Y transformations
         // to the top-left corner of the zoomed-in view (the default
@@ -280,7 +293,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder>
         // to the original bounds and show the thumbnail instead of
         // the expanded image.
         final float startScaleFinal = startScale;
-        View.OnClickListener onClickListener = new View.OnClickListener() {
+        final View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mCurrentAnimator != null) {
@@ -311,6 +324,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder>
                         largeContainer.setVisibility(View.GONE);
                         setAsWallpaper.setVisibility(View.GONE);
                         downloadImage.setVisibility(View.GONE);
+                        deleteImage.setVisibility(View.GONE);
                         if(mContext.getmAlbumtype() == GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_GALLERY)
                             mContext.findViewById(R.id.floatingMenu).setVisibility(View.VISIBLE);
                         mCurrentAnimator = null;
@@ -323,6 +337,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder>
                         largeContainer.setVisibility(View.GONE);
                         setAsWallpaper.setVisibility(View.GONE);
                         downloadImage.setVisibility(View.GONE);
+                        deleteImage.setVisibility(View.GONE);
                         if(mContext.getmAlbumtype() == GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_GALLERY)
                             mContext.findViewById(R.id.floatingMenu).setVisibility(View.VISIBLE);
                         mCurrentAnimator = null;
@@ -335,6 +350,13 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder>
         mContext.setBackClickable(onClickListener);
         expandedImageView.setOnClickListener(onClickListener);
         largeContainer.setOnClickListener(onClickListener);
+        deleteImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickListener.onClick(null);
+                mContext.deleteImage(imageResId.toString());
+            }
+        });
     }
 
     @Override

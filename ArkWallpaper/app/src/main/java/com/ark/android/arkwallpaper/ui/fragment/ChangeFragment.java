@@ -1,11 +1,16 @@
 package com.ark.android.arkwallpaper.ui.fragment;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.util.Pair;
 import android.support.v7.widget.CardView;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -27,6 +32,7 @@ import com.ark.android.arkwallpaper.Constants;
 import com.ark.android.arkwallpaper.R;
 import com.ark.android.arkwallpaper.WallpaperApp;
 import com.ark.android.arkwallpaper.presenter.contract.HomeContract;
+import com.ark.android.arkwallpaper.ui.activity.LastImageInfoActivity;
 import com.ark.android.arkwallpaper.utils.WallPaperUtils;
 import com.ark.android.arkwallpaper.utils.uiutils.GlideContentProviderLoader;
 import com.bumptech.glide.Glide;
@@ -36,13 +42,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- *
  * Created by ahmed-basyouni on 4/17/17.
  */
 
 public class ChangeFragment extends Fragment implements HomeContract.OnHomePagerChange
         , CompoundButton.OnCheckedChangeListener
-        , TextWatcher, AdapterView.OnItemSelectedListener,SharedPreferences.OnSharedPreferenceChangeListener {
+        , TextWatcher, AdapterView.OnItemSelectedListener, SharedPreferences.OnSharedPreferenceChangeListener, View.OnClickListener {
 
     @BindView(R.id.lastWallpaperContainer)
     CardView lastWallpaperContainer;
@@ -58,6 +63,8 @@ public class ChangeFragment extends Fragment implements HomeContract.OnHomePager
     CheckBox changeWithUnlockCheckBox;
     @BindView(R.id.changeWithDoubleTap)
     CheckBox changeWithDoubleTap;
+    @BindView(R.id.lastImageText)
+    TextView lastImageText;
 
     @Override
     public void onFragmentSelected() {
@@ -75,6 +82,7 @@ public class ChangeFragment extends Fragment implements HomeContract.OnHomePager
         setCheckBoxesListener();
         setChangeUnitSpinner();
         changeEveryField.addTextChangedListener(this);
+        lastWallpaperContainer.setOnClickListener(this);
         PreferenceManager.getDefaultSharedPreferences(getActivity()).registerOnSharedPreferenceChangeListener(this);
         return rootView;
     }
@@ -158,7 +166,7 @@ public class ChangeFragment extends Fragment implements HomeContract.OnHomePager
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        if(++check > 1) {
+        if (++check > 1) {
             if (changeEveryCheckBox.isChecked())
                 if (changeEveryField.getText().toString().isEmpty()) {
                     fieldIsEmpty();
@@ -176,7 +184,7 @@ public class ChangeFragment extends Fragment implements HomeContract.OnHomePager
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if(key != null && key.equals(Constants.CURRENT_WALLPAPER_KEY))
+        if (key != null && key.equals(Constants.CURRENT_WALLPAPER_KEY))
             checkWallpaper();
     }
 
@@ -192,8 +200,28 @@ public class ChangeFragment extends Fragment implements HomeContract.OnHomePager
 
     @Override
     public void afterTextChanged(Editable s) {
-        if(changeEveryCheckBox.isChecked() && !changeEveryField.getText().toString().isEmpty())
+        if (changeEveryCheckBox.isChecked() && !changeEveryField.getText().toString().isEmpty())
             WallPaperUtils.setChangeInterval(Integer.parseInt(changeEveryField.getText().toString())
                     , Constants.INTERVAL_MODE.values()[changeEveryUnit.getSelectedItemPosition()]);
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.lastWallpaperContainer) {
+//            startActivity(new Intent(getActivity(), LastImageInfoActivity.class));
+//            getActivity().overridePendingTransition(R.anim.zoom_in, R.anim.zoom_out);
+            Intent intent = new Intent(getActivity(), LastImageInfoActivity.class);
+            Pair<View, String> p1 = Pair.create((View) lastChosenWallpaper, getString(R.string.expandedImageView));
+            Pair<View, String> p2 = Pair.create((View) lastImageText, getString(R.string.album_single_image_info));
+            ActivityOptionsCompat options = ActivityOptionsCompat.
+                    makeSceneTransitionAnimation(getActivity(), p1, p2);
+//            startActivity(intent, options.toBundle());
+            getActivity().startActivityFromFragment(this, intent, LastImageInfoActivity.REQUEST_ID, options.toBundle());
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

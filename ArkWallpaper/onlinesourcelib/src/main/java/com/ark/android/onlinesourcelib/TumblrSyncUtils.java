@@ -74,6 +74,14 @@ public class TumblrSyncUtils {
                 account, CONTENT_AUTHORITY, newBundle,SYNC_FREQUENCY);
     }
 
+    public static void removePeriodicSync(String oldAlbumName){
+        Account account = TumblrGenericAccountService.GetAccount(ACCOUNT_TYPE);
+        Bundle bundle = new Bundle();
+        bundle.putString("albumName" , oldAlbumName);
+        bundle.putBoolean("isPer", true);
+        ContentResolver.removePeriodicSync(account, CONTENT_AUTHORITY, bundle);
+    }
+
     /**
      * Helper method to trigger an immediate sync ("refresh").
      *

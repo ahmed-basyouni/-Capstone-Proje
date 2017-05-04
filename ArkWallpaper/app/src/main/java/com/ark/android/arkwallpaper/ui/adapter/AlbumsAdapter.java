@@ -3,7 +3,9 @@ package com.ark.android.arkwallpaper.ui.adapter;
 import android.animation.Animator;
 import android.app.Activity;
 import android.app.ActivityOptions;
+import android.app.Dialog;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -11,8 +13,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
@@ -134,7 +134,7 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
         holder.deleteAlbum.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDeleteDialog(albumObject.getAlbumName());
+                showDeleteDialog(albumObject);
             }
         });
 
@@ -271,13 +271,17 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
         iAlbumPresenter.showEditTumblrDialog(albumObject.getTumblrBlogName(), action);
     }
 
-    private void showDeleteDialog(final String albumName) {
+    private void showDeleteDialog(final AlbumObject albumObject) {
         new AlertDialog.Builder(context)
                 .setTitle(context.getString(R.string.delete))
                 .setMessage(context.getString(R.string.album_delete_confirmation))
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        iAlbumPresenter.deleteAlbum(albumName);
+                        if(albumObject.getType() == GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_TUMBLR)
+                            TumblrSyncUtils.removePeriodicSync(albumObject.getTumblrBlogName());
+                        else if(albumObject.getType() == GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_PX)
+                            FivePxSyncUtils.removePeriodicSync(albumObject.getFivePxCategoryName());
+                        iAlbumPresenter.deleteAlbum(albumObject.getAlbumName());
                     }
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {

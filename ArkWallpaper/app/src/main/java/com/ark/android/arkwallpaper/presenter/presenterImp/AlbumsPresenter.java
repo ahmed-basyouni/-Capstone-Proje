@@ -48,6 +48,8 @@ public class AlbumsPresenter implements AlbumFragmentContract.IAlbumsPresenter {
                     albums = AlbumObject.getAlbumsFromCursor(data);
                     if(WallPaperUtils.getCurrentAlbum() == null){
                         WallPaperUtils.setCurrentAlbum(albums.get(0).getAlbumName());
+                        if(WallPaperUtils.isLiveWallpaperActive())
+                            WallPaperUtils.changeWallpaperBroadCast(null);
                     }
                     shouldAddObservers();
                     WallpaperApp.getWallpaperApp().runOnUI(new Runnable() {

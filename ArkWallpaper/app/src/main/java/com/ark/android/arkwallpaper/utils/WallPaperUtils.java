@@ -55,9 +55,9 @@ public class WallPaperUtils {
                 .getInt(WALLPAPER_ALBUM_ID, -1);
     }
 
-    private static void setCurrentWallpaper(Uri currentWallpaper) {
+    private static void setCurrentWallpaper(String currentWallpaper) {
         SharedPreferences sharedPreferences = getSharedPreferences();
-        sharedPreferences.edit().putString(CURRENT_WALLPAPER_KEY, currentWallpaper.toString()).apply();
+        sharedPreferences.edit().putString(CURRENT_WALLPAPER_KEY, currentWallpaper).apply();
     }
 
     public static void setCurrentAlbum(String currentAlbumName) {
@@ -85,11 +85,11 @@ public class WallPaperUtils {
 
         String imageUri = "";
 
-        if (cursor != null) {
+        if (cursor != null && cursor.getCount() > 0) {
             int randomIndex = new Random().nextInt(cursor.getCount());
             cursor.moveToPosition(randomIndex);
             imageUri = cursor.getString(cursor.getColumnIndex(GallaryDataBaseContract.GalleryTable.COLUMN_NAME_URI));
-            setCurrentWallpaper(Uri.parse(imageUri));
+            setCurrentWallpaper(imageUri);
             setCurrentWallpaperId(cursor.getInt(cursor.getColumnIndex(GallaryDataBaseContract.GalleryTable._ID)));
             cursor.close();
 
@@ -111,7 +111,7 @@ public class WallPaperUtils {
 
         if (cursor != null) {
             cursor.moveToPosition(0);
-            setCurrentWallpaper(Uri.parse(forceUri));
+            setCurrentWallpaper(forceUri);
             setCurrentWallpaperId(cursor.getInt(cursor.getColumnIndex(GallaryDataBaseContract.GalleryTable._ID)));
             setCurrentAlbum(cursor.getString(cursor.getColumnIndex(GallaryDataBaseContract.GalleryTable.COLUMN_ALBUM_NAME)));
             cursor.close();
@@ -217,7 +217,7 @@ public class WallPaperUtils {
         sharedPreferences.edit().putInt(CHANGE_INTERVAL_KEY, interval).apply();
     }
 
-    private static void updateChangeAlarm(long interval) {
+    public static void updateChangeAlarm(long interval) {
         AlarmManager manager = (AlarmManager) WallpaperApp.getWallpaperApp().getSystemService(Context.ALARM_SERVICE);
         cancelAlarm();
         manager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + interval,
@@ -230,4 +230,8 @@ public class WallPaperUtils {
     }
 
 
+    public static void checkDeletedAlbum(String albumName) {
+        if(getCurrentAlbum().equals(albumName))
+            setCurrentAlbum(null);
+    }
 }

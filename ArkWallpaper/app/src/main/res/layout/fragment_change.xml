@@ -8,7 +8,7 @@
     <android.support.v7.widget.CardView
         android:id="@+id/lastWallpaperContainer"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/doubleCardHeight"
+        android:layout_height="@dimen/changeImageContainerHeight"
         android:visibility="gone"
         android:layout_margin="@dimen/cardView_margin"
         android:elevation="@dimen/default_elevation">
@@ -16,9 +16,24 @@
         <ImageView
             android:id="@+id/lastSetImage"
             android:layout_width="match_parent"
+            android:clickable="false"
+            android:transitionName="@string/expandedImageView"
             android:layout_height="match_parent"
             android:contentDescription="@string/lastWallpaper"
             android:scaleType="centerCrop" />
+
+        <TextView
+            android:id="@+id/lastImageText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            tools:text="Last set Image"
+            android:clickable="false"
+            android:transitionName="@string/album_single_image_info"
+            android:padding="@dimen/smallPadding"
+            android:text="@string/lastWallpaper"
+            android:textColor="@color/text_secondary"
+            android:background="@color/elevated_info"/>
 
     </android.support.v7.widget.CardView>
 

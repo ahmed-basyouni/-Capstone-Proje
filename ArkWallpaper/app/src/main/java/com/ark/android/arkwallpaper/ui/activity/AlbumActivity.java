@@ -4,11 +4,12 @@ package com.ark.android.arkwallpaper.ui.activity;
 import android.accounts.Account;
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SyncStatusObserver;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
+import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -16,13 +17,12 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -31,10 +31,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.ark.android.arkwallpaper.R;
-import com.ark.android.arkwallpaper.data.manager.AlbumsManager;
-import com.ark.android.arkwallpaper.data.model.AlbumObject;
 import com.ark.android.arkwallpaper.ui.adapter.AlbumAdapter;
-import com.ark.android.arkwallpaper.utils.WallPaperUtils;
 import com.ark.android.gallerylib.CancelReason;
 import com.ark.android.gallerylib.ChooserActivity;
 import com.ark.android.gallerylib.data.GallaryDataBaseContract;
@@ -72,6 +69,8 @@ public class AlbumActivity extends AppCompatActivity implements LoaderManager.Lo
     ImageButton refreshButton;
     @BindView(R.id.syncProgressIndicator)
     ProgressBar syncProgressIndicator;
+    @BindView(R.id.emptyView)
+    TextView emptyView;
 
 
     private Animation fabOpen;
@@ -106,20 +105,20 @@ public class AlbumActivity extends AppCompatActivity implements LoaderManager.Lo
 
         mAlbumtype = getIntent().getExtras().getInt("type", GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_GALLERY);
 
-        if(mAlbumtype == GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_GALLERY)
+        if (mAlbumtype == GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_GALLERY)
             refreshButton.setVisibility(View.GONE);
 
         refreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mAlbumtype == GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_TUMBLR){
+                if (mAlbumtype == GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_TUMBLR) {
                     Bundle bundle = new Bundle();
-                    bundle.putString("albumName" , getIntent().getExtras().getString("tumblrBlog"));
+                    bundle.putString("albumName", getIntent().getExtras().getString("tumblrBlog"));
                     TumblrSyncUtils.TriggerRefresh(bundle);
 
-                }else if(mAlbumtype == GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_PX){
+                } else if (mAlbumtype == GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_PX) {
                     Bundle bundle = new Bundle();
-                    bundle.putString(FiveHundredSyncAdapter.CAT_KEY , getIntent().getExtras().getString("fivePxCat"));
+                    bundle.putString(FiveHundredSyncAdapter.CAT_KEY, getIntent().getExtras().getString("fivePxCat"));
                     FivePxSyncUtils.TriggerRefresh(bundle);
                 }
             }
@@ -137,21 +136,21 @@ public class AlbumActivity extends AppCompatActivity implements LoaderManager.Lo
         floatingMenu.setOnClickListener(this);
         addFolder.setOnClickListener(this);
         addImage.setOnClickListener(this);
-        if(getIntent().getExtras().getString("albumName").equals(FiveHundredSyncAdapter.ALBUM_NAME))
+        if (getIntent().getExtras().getString("albumName").equals(FiveHundredSyncAdapter.ALBUM_NAME))
             progressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if(mAlbumtype == GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_TUMBLR){
+        if (mAlbumtype == GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_TUMBLR) {
             mSyncTumblrStatusObserver.onStatusChanged(0);
             // Watch for sync state changes
             final int mask = ContentResolver.SYNC_OBSERVER_TYPE_PENDING |
                     ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE;
             mSyncTumblrObserverHandle = ContentResolver.addStatusChangeListener(mask, mSyncTumblrStatusObserver);
 
-        }else if(mAlbumtype == GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_PX){
+        } else if (mAlbumtype == GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_PX) {
             mSyncFivePxStatusObserver.onStatusChanged(0);
             // Watch for sync state changes
             final int mask = ContentResolver.SYNC_OBSERVER_TYPE_PENDING |
@@ -168,7 +167,7 @@ public class AlbumActivity extends AppCompatActivity implements LoaderManager.Lo
             mSyncTumblrObserverHandle = null;
         }
 
-        if(mSync500PxObserverHandle != null){
+        if (mSync500PxObserverHandle != null) {
             ContentResolver.removeStatusChangeListener(mSync500PxObserverHandle);
             mSync500PxObserverHandle = null;
         }
@@ -185,7 +184,11 @@ public class AlbumActivity extends AppCompatActivity implements LoaderManager.Lo
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if (data != null && data.getCount() > 0) {
             progressBar.setVisibility(View.GONE);
+            emptyView.setVisibility(View.GONE);
             setupAdapter(data);
+        }else{
+            albumList.setAdapter(null);
+            emptyView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -193,8 +196,8 @@ public class AlbumActivity extends AppCompatActivity implements LoaderManager.Lo
         data.moveToFirst();
         List<Uri> images = new ArrayList<>();
         while (!data.isAfterLast()) {
-            if(data.getString(data.getColumnIndex(GallaryDataBaseContract.GalleryTable.COLUMN_ALBUM_NAME)).equalsIgnoreCase(TumblrSyncAdapter.ALBUM_NAME) ||
-                    data.getString(data.getColumnIndex(GallaryDataBaseContract.GalleryTable.COLUMN_ALBUM_NAME)).equalsIgnoreCase(FiveHundredSyncAdapter.ALBUM_NAME)){
+            if (data.getString(data.getColumnIndex(GallaryDataBaseContract.GalleryTable.COLUMN_ALBUM_NAME)).equalsIgnoreCase(TumblrSyncAdapter.ALBUM_NAME) ||
+                    data.getString(data.getColumnIndex(GallaryDataBaseContract.GalleryTable.COLUMN_ALBUM_NAME)).equalsIgnoreCase(FiveHundredSyncAdapter.ALBUM_NAME)) {
                 floatingMenu.setVisibility(View.GONE);
             }
             images.add(Uri.parse(data.getString(data.getColumnIndex(GallaryDataBaseContract.GalleryTable.COLUMN_NAME_URI))));
@@ -208,7 +211,7 @@ public class AlbumActivity extends AppCompatActivity implements LoaderManager.Lo
             public int getSpanSize(int position) {
                 int mod = position % 3;
 
-                if(mod == 0 || mod == 1)
+                if (mod == 0 || mod == 1)
                     return 1;
                 else
                     return 2;
@@ -228,10 +231,10 @@ public class AlbumActivity extends AppCompatActivity implements LoaderManager.Lo
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == Activity.RESULT_CANCELED && data != null){
+        if (resultCode == Activity.RESULT_CANCELED && data != null && requestCode == CHOOSER_ACTIVITY_REQUEST) {
             int cancelReason = data.getIntExtra(ChooserActivity.CANCEL_REASON, CancelReason.REASON_CANCEL);
 
-            switch (cancelReason){
+            switch (cancelReason) {
                 case CancelReason.REASON_PERMISSION:
                     showSnackBar(getString(R.string.permission_denied));
                     break;
@@ -242,15 +245,17 @@ public class AlbumActivity extends AppCompatActivity implements LoaderManager.Lo
                     showSnackBar(getString(R.string.gallery_add_photos_error));
                     break;
             }
+        }else if(resultCode == Activity.RESULT_OK && data != null && requestCode == LastImageInfoActivity.REQUEST_ID){
+            showDeleteDialog(data.getStringExtra(LastImageInfoActivity.IMAGE_URI));
         }
     }
 
-    void showSnackBar(String msg){
-        if(isFabOpen)
+    void showSnackBar(String msg) {
+        if (isFabOpen)
             animateFAB();
         Snackbar snack = Snackbar.make(findViewById(R.id.coordinateLayout), msg, Snackbar.LENGTH_LONG);
         View view = snack.getView();
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams)view.getLayoutParams();
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) view.getLayoutParams();
         params.gravity = Gravity.BOTTOM;
         view.setLayoutParams(params);
         snack.show();
@@ -300,15 +305,15 @@ public class AlbumActivity extends AppCompatActivity implements LoaderManager.Lo
                         ? ChooserActivity.CHOOSE_FOLDER : ChooserActivity.CHOOSE_IMAGE), CHOOSER_ACTIVITY_REQUEST);
     }
 
-    public void setBackClickable(View.OnClickListener backClickable){
+    public void setBackClickable(View.OnClickListener backClickable) {
         this.backClick = backClickable;
     }
 
     @Override
     public void onBackPressed() {
-        if(backClick != null && findViewById(R.id.expandedImageView).getVisibility() == View.VISIBLE){
+        if (backClick != null && findViewById(R.id.expandedImageView).getVisibility() == View.VISIBLE) {
             backClick.onClick(null);
-        }else{
+        } else {
             super.onBackPressed();
         }
     }
@@ -386,12 +391,34 @@ public class AlbumActivity extends AppCompatActivity implements LoaderManager.Lo
     };
 
     public void setRefreshActionButtonState(boolean refreshing) {
-        if(refreshing){
+        if (refreshing) {
             syncProgressIndicator.setVisibility(View.VISIBLE);
             refreshButton.setEnabled(false);
-        }else{
+        } else {
             syncProgressIndicator.setVisibility(View.GONE);
             refreshButton.setEnabled(true);
         }
+    }
+
+    public void deleteImage(String imageUri) {
+        showDeleteDialog(imageUri);
+    }
+
+    private void showDeleteDialog(final String imageUri) {
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.delete))
+                .setMessage(getString(R.string.image_delete_confirmation))
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        getContentResolver().delete(GallaryDataBaseContract.GalleryTable.CONTENT_URI
+                                , GallaryDataBaseContract.GalleryTable.COLUMN_NAME_URI + " = ?", new String[]{imageUri});
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                    }
+                })
+                .show();
     }
 }

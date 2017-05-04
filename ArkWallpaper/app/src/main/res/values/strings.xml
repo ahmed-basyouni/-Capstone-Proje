@@ -12,11 +12,12 @@
     <string name="close">close</string>
     <string name="rename">Rename</string>
     <string name="album_delete_confirmation">Are you sure you want to delete this album?</string>
+    <string name="image_delete_confirmation">Are you sure you want to delete this image?</string>
     <string name="permission_denied">Please grant permission to continue</string>
     <string name="gallery_add_photos_error">Your device does not support adding pictures.\nPlease contact your manufacturer.</string>
     <string name="gallery_add_folder_error">Your device does not support adding folders.\nPlease contact your manufacturer.</string>
     <string name="albumCount">(%d images)</string>
-    <string name="album_single_image">imageTransition</string>
+    <string name="album_single_image_info">imageTransition</string>
     <string name="blogName">Blog name</string>
     <string name="Syncung">Syncing.....</string>
     <string name="blogNotFound">No blog found please check the name and try again</string>
@@ -39,6 +40,8 @@
     <string name="changeWithUnlock">Change wallpaper on unlock screen</string>
     <string name="changeWithDoubleTap">Change Wallpaper with double tap</string>
     <string name="changeValueIsEmpty">Please enter a valid value</string>
+    <string name="emptyAlbum">Album is empty</string>
+    <string name="expandedImageView">expandedImageView</string>
 
     <string-array name="fivePx_Cat">
         <item>All</item>

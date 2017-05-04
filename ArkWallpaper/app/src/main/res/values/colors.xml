@@ -14,5 +14,6 @@
     <color name="expanded_image_bg">#cc757575</color>
     <color name="floatingFolderColor">#E040FB</color>
     <color name="floatingImageColor">#009688</color>
+    <color name="lightGrey">#DCDCDC</color>
 
 </resources>
