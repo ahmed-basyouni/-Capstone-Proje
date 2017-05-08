@@ -26,6 +26,8 @@ import java.text.ParseException;
 import android.graphics.Path;
 import android.graphics.PointF;
 
+import com.ark.android.arkanalytics.GATrackerManager;
+
 public class SvgPathParser {
     private static final int TOKEN_ABSOLUTE_COMMAND = 1;
     private static final int TOKEN_RELATIVE_COMMAND = 2;
@@ -251,6 +253,7 @@ public class SvgPathParser {
             mIndex = index;
             return value;
         } catch (NumberFormatException e) {
+            GATrackerManager.getInstance().trackException(e);
             throw new ParseException("Invalid float value '" + str + "'.", mIndex);
         }
     }

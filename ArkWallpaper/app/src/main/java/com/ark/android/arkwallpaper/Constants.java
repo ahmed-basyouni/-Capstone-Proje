@@ -22,8 +22,20 @@ public final class Constants {
     public static final String CHANGE_WITH_INTERVAL_KEY = "com.ark.android.arkwallpaper.utils.changeWithInterval";
     public static final String CHANGE_Unit_KEY = "com.ark.android.arkwallpaper.utils.changeUnit";
     public static final String CHANGE_INTERVAL_KEY = "com.ark.android.arkwallpaper.utils.changeValue";
+    public static final String CURRENT_PIC_INDEX_KEY = "com.ark.android.arkwallpaper.utils.currentImageIndex";
+    public static final String CHANGE_SCROLLING_KEY = "com.ark.android.arkwallpaper.utils.scrolling";
+    public static final String CHANGE_DISPLAY_MODE_KEY = "com.ark.android.arkwallpaper.utils.displayMode";
+    public static final String RANDOM_ORDER_KEY = "com.ark.android.arkwallpaper.utils.changeOrder";
+    public static final String GREY_SCALE_KEY = "com.ark.android.arkwallpaper.utils.greyScale";
+    public static final String BLURRING_KEY = "com.ark.android.arkwallpaper.utils.blurring";
+    public static final String DIM_KEY = "com.ark.android.arkwallpaper.utils.dim";
 
     public static final int ALARM_ID = 0x0a;
+
+    public enum DISPLAY_MODE{
+        FIT,
+        FILL
+    }
 
     public enum INTERVAL_MODE{
         TIME_MIN_INTERVAL(1000 * 60),

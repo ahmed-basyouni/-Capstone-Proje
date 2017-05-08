@@ -30,6 +30,9 @@
         <activity android:name=".ui.activity.LastImageInfoActivity"
             android:theme="@style/TransActivity"/>
 
+        <activity android:name=".ui.activity.CustomizeWallpaperActivity"
+            android:theme="@style/TransActivity"/>
+
         <service android:name=".WallpaperObserverService"/>
 
         <service android:name=".WallpaperSlideshow"

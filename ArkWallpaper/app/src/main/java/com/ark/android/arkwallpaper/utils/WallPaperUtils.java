@@ -70,7 +70,7 @@ public class WallPaperUtils {
     }
 
 
-    public static String getRandomImage() {
+    public static String getImages() {
 
         if(getCurrentAlbum() == null)
             return null;
@@ -86,8 +86,15 @@ public class WallPaperUtils {
         String imageUri = "";
 
         if (cursor != null && cursor.getCount() > 0) {
-            int randomIndex = new Random().nextInt(cursor.getCount());
-            cursor.moveToPosition(randomIndex);
+            int index;
+            if(isRandomOrder()) {
+                setCurrentPicIndex(0);
+                index = new Random().nextInt(cursor.getCount());
+            }else{
+                index = getCurrentPicIndex() < cursor.getCount() ? getCurrentPicIndex() : 0;
+                setCurrentPicIndex(index + 1);
+            }
+            cursor.moveToPosition(index);
             imageUri = cursor.getString(cursor.getColumnIndex(GallaryDataBaseContract.GalleryTable.COLUMN_NAME_URI));
             setCurrentWallpaper(imageUri);
             setCurrentWallpaperId(cursor.getInt(cursor.getColumnIndex(GallaryDataBaseContract.GalleryTable._ID)));
@@ -116,6 +123,16 @@ public class WallPaperUtils {
             setCurrentAlbum(cursor.getString(cursor.getColumnIndex(GallaryDataBaseContract.GalleryTable.COLUMN_ALBUM_NAME)));
             cursor.close();
         }
+    }
+
+    private static void setCurrentPicIndex(int currentPicIndex) {
+        SharedPreferences sharedPreferences = getSharedPreferences();
+        sharedPreferences.edit().putInt(CURRENT_PIC_INDEX_KEY, currentPicIndex).apply();
+    }
+
+    private static int getCurrentPicIndex() {
+        return getSharedPreferences()
+                .getInt(CURRENT_PIC_INDEX_KEY, 0);
     }
 
     public static boolean isLiveWallpaperActive() {
@@ -164,6 +181,33 @@ public class WallPaperUtils {
         return getSharedPreferences().getBoolean(CHANGE_WITH_DOUBLE_TAP_KEY, false);
     }
 
+    public static void setScrolling(boolean scroll) {
+        SharedPreferences sharedPreferences = getSharedPreferences();
+        sharedPreferences.edit().putBoolean(CHANGE_SCROLLING_KEY, scroll).apply();
+    }
+
+    public static boolean isScrolling(){
+        return getSharedPreferences().getBoolean(CHANGE_SCROLLING_KEY, false);
+    }
+
+    public static void setDisplayMode(DISPLAY_MODE displayMode) {
+        SharedPreferences sharedPreferences = getSharedPreferences();
+        sharedPreferences.edit().putInt(CHANGE_DISPLAY_MODE_KEY, displayMode.ordinal()).apply();
+    }
+
+    public static int getDisplayMode(){
+        return getSharedPreferences().getInt(CHANGE_DISPLAY_MODE_KEY, DISPLAY_MODE.FIT.ordinal());
+    }
+
+    public static void setRandomOrder(boolean isRandom) {
+        SharedPreferences sharedPreferences = getSharedPreferences();
+        sharedPreferences.edit().putBoolean(RANDOM_ORDER_KEY, isRandom).apply();
+    }
+
+    public static boolean isRandomOrder() {
+        return getSharedPreferences()
+                .getBoolean(RANDOM_ORDER_KEY, false);
+    }
 
     public static void setChangeWithUnlock(boolean isChecked) {
         SharedPreferences sharedPreferences = getSharedPreferences();
@@ -215,6 +259,33 @@ public class WallPaperUtils {
     private static void setChangeWallpaperInterval(int interval) {
         SharedPreferences sharedPreferences = getSharedPreferences();
         sharedPreferences.edit().putInt(CHANGE_INTERVAL_KEY, interval).apply();
+    }
+
+    public static float getCurrentGreyScale(){
+        return getSharedPreferences().getFloat(GREY_SCALE_KEY, 0.0f);
+    }
+
+    public static void setCurrentGreyScale(float greyScale) {
+        SharedPreferences sharedPreferences = getSharedPreferences();
+        sharedPreferences.edit().putFloat(GREY_SCALE_KEY, greyScale).apply();
+    }
+
+    public static int getCurrentBlurring(){
+        return getSharedPreferences().getInt(BLURRING_KEY, 0);
+    }
+
+    public static void setCurrentBlurring(int blurring) {
+        SharedPreferences sharedPreferences = getSharedPreferences();
+        sharedPreferences.edit().putInt(BLURRING_KEY, blurring).apply();
+    }
+
+    public static int getCurrentDim(){
+        return getSharedPreferences().getInt(DIM_KEY, 0);
+    }
+
+    public static void setCurrentDim(int dim) {
+        SharedPreferences sharedPreferences = getSharedPreferences();
+        sharedPreferences.edit().putInt(DIM_KEY, dim).apply();
     }
 
     public static void updateChangeAlarm(long interval) {

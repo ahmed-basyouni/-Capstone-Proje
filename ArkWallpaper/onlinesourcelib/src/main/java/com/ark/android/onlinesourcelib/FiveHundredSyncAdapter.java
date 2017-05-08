@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.RemoteException;
 
+import com.ark.android.arkanalytics.GATrackerManager;
 import com.ark.android.gallerylib.data.GallaryDataBaseContract;
 
 import java.io.File;
@@ -71,6 +72,7 @@ public class FiveHundredSyncAdapter extends AbstractThreadedSyncAdapter {
                     }
                     FivePxManager.getInstance().setOffset(getContext());
                 } catch (RemoteException | OperationApplicationException e) {
+                    GATrackerManager.getInstance().trackException(e);
                     e.printStackTrace();
                 }
             }
@@ -97,6 +99,7 @@ public class FiveHundredSyncAdapter extends AbstractThreadedSyncAdapter {
                         .withValues(values).build());
             }
         } catch (IOException e) {
+            GATrackerManager.getInstance().trackException(e);
             e.printStackTrace();
         }
     }
@@ -122,6 +125,7 @@ public class FiveHundredSyncAdapter extends AbstractThreadedSyncAdapter {
             //close the output stream when done
             out.close();
         } catch (Exception e) {
+            GATrackerManager.getInstance().trackException(e);
             e.printStackTrace();
             return null;
         }

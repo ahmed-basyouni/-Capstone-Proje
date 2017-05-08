@@ -4,11 +4,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.ark.android.arkwallpaper.R;
-import com.ark.android.arkwallpaper.presenter.contract.HomeContract;
-import com.ark.android.arkwallpaper.ui.fragment.ChangeFragment;
-import com.ark.android.arkwallpaper.ui.fragment.SettingsFragment;
-
 import java.util.List;
 
 /**
@@ -17,9 +12,9 @@ import java.util.List;
 
 public class HomePagerAdapter extends FragmentPagerAdapter {
 
-    private List<HomeContract.OnHomePagerChange> fragmentsList;
+    private List<Fragment> fragmentsList;
 
-    public HomePagerAdapter(FragmentManager fm, List<HomeContract.OnHomePagerChange> fragmentsList) {
+    public HomePagerAdapter(FragmentManager fm, List<Fragment> fragmentsList) {
         super(fm);
         this.fragmentsList = fragmentsList;
     }
@@ -34,7 +29,7 @@ public class HomePagerAdapter extends FragmentPagerAdapter {
         return fragmentsList.size();
     }
 
-    public List<HomeContract.OnHomePagerChange> getFragmentsList() {
+    public List<Fragment> getFragmentsList() {
         return fragmentsList;
     }
 }

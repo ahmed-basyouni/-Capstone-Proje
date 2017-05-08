@@ -1,1 +1,1 @@
-include ':app' , ':onlinesourcelib' , ':gallerylib'
+include ':app', ':arkanalytics', ':onlinesourcelib', ':gallerylib'

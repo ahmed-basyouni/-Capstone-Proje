@@ -26,6 +26,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ark.android.arkanalytics.GATrackerManager;
 import com.ark.android.arkwallpaper.R;
 import com.ark.android.arkwallpaper.ui.activity.AlbumActivity;
 import com.ark.android.arkwallpaper.ui.activity.LastImageInfoActivity;
@@ -182,6 +183,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder>
                     IOUtils.exportFile(new File(imageResId.getPath()));
                     Toast.makeText(mContext, mContext.getString(R.string.imageSaved), Toast.LENGTH_SHORT).show();
                 } catch (IOException e) {
+                    GATrackerManager.getInstance().trackException(e);
                     e.printStackTrace();
                 }
             }

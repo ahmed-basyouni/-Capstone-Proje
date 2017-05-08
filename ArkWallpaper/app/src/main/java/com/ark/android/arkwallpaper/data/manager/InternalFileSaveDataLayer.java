@@ -13,6 +13,8 @@ import java.io.Serializable;
 import android.content.Context;
 import android.os.Parcelable;
 
+import com.ark.android.arkanalytics.GATrackerManager;
+
 /**
  * 
  * @author Basyouni
@@ -62,6 +64,7 @@ public class InternalFileSaveDataLayer {
 			try {
 				file = new File(path);
 			} catch (NullPointerException e) {
+				GATrackerManager.getInstance().trackException(e);
 				return false;
 			}
 

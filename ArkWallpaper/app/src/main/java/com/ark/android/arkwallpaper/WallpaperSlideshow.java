@@ -36,6 +36,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.service.wallpaper.WallpaperService;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
@@ -43,8 +44,12 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.widget.Toast;
 
+import com.ark.android.arkanalytics.GATrackerManager;
 import com.ark.android.arkwallpaper.utils.WallPaperUtils;
 import com.ark.android.arkwallpaper.utils.uiutils.BitmapUtil;
+import com.ark.android.arkwallpaper.utils.uiutils.GlideBlurringTransformation;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.BitmapResource;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -83,6 +88,7 @@ public class WallpaperSlideshow extends WallpaperService {
         private final Paint mPaint = new Paint();
         private final Matrix mScaler = new Matrix();
         private final Context mContext;
+        private final SharedPreferences mPrefs;
         private int mWidth = 0;
         private int mHeight = 0;
         private int mMinWidth = 0;
@@ -104,7 +110,7 @@ public class WallpaperSlideshow extends WallpaperService {
 
         private boolean mRandom = false;
         private boolean mRotate = false;
-        private boolean mScroll = true;
+        private boolean mScroll = false;
         private boolean mRecurse = false;
         private boolean mTouchEvents = true;
         private boolean mScreenWake = false;
@@ -121,6 +127,10 @@ public class WallpaperSlideshow extends WallpaperService {
             }
         };
         private boolean isGif;
+        private boolean mFit = true;
+        private boolean mFill;
+        private int mOriginalWidth;
+        private int mOriginalHeight;
 
         WallpaperEngine(Context context) {
             final Paint paint = mPaint;
@@ -130,6 +140,11 @@ public class WallpaperSlideshow extends WallpaperService {
             paint.setTextSize(18f);
             mContext = context;
 
+            mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+            mPrefs.registerOnSharedPreferenceChangeListener(this);
+
+            // Read the preferences
+            onSharedPreferenceChanged(mPrefs, null);
 
             doubleTapDetector = new GestureDetector(WallpaperSlideshow.this, new SimpleOnGestureListener() {
                 @Override
@@ -233,6 +248,7 @@ public class WallpaperSlideshow extends WallpaperService {
             if(!isPreview())
                 WallPaperUtils.setLiveWallpaperIsRunning(false);
             mHandler.removeCallbacks(mWorker);
+            mPrefs.unregisterOnSharedPreferenceChangeListener(this);
         }
 
         @Override
@@ -296,65 +312,36 @@ public class WallpaperSlideshow extends WallpaperService {
 //                mLastDrawTime = 0;
 //                drawFrame();
 //            }
-
-
-//    		if (key == null) {
-//    			mFolder = sharedPreferences.getString(
-//    					res.getString(R.string.preferences_folder_key),
-//						Environment.getExternalStorageDirectory()
-//								.getAbsolutePath() + "/DCIM/100MEDIA");
-//    			mDuration = Integer.valueOf(sharedPreferences.getString(
-//    					res.getString(R.string.preferences_duration_key),
-//    					res.getString(R.string.preferences_duration_default)));
-//    			mRandom = sharedPreferences.getBoolean(
-//    					res.getString(R.string.preferences_random_key),
-//    					Boolean.valueOf(res.getString(R.string.preferences_random_default)));
-//    			mRotate = sharedPreferences.getBoolean(
-//    					res.getString(R.string.preferences_rotate_key),
-//    					Boolean.valueOf(res.getString(R.string.preferences_rotate_default)));
-//    			mScroll = sharedPreferences.getBoolean(
-//    					res.getString(R.string.preferences_scroll_key),
-//    					Boolean.valueOf(res.getString(R.string.preferences_scroll_default)));
-//    			mRecurse = sharedPreferences.getBoolean(
-//    					res.getString(R.string.preferences_recurse_key),
-//    					Boolean.valueOf(res.getString(R.string.preferences_recurse_default)));
-//    			mTouchEvents = sharedPreferences.getBoolean(
-//    					res.getString(R.string.preferences_doubletap_key),
-//    					Boolean.valueOf(res.getString(R.string.preferences_doubletap_default)));
-//    			mScreenWake = sharedPreferences.getBoolean(
-//    					res.getString(R.string.preferences_screen_awake_key),
-//    					Boolean.valueOf(res.getString(R.string.preferences_screen_awake_default)));
-//                mLastDrawTime = 0;
-//    		} else if (key.equals(res.getString(R.string.preferences_folder_key))) {
-//    			mFolder = sharedPreferences.getString(key,
-//    					res.getString(R.string.preferences_folder_default));
-//    			mIndex = -1;
-//                mLastDrawTime = 0;
-//    		} else if (key.equals(res.getString(R.string.preferences_duration_key))) {
-//    			mDuration = Integer.parseInt(sharedPreferences.getString(key,
-//    					res.getString(R.string.preferences_duration_default)));
-//    		} else if (key.equals(res.getString(R.string.preferences_random_key))) {
-//    			mRandom = sharedPreferences.getBoolean(key,
-//    					Boolean.valueOf(res.getString(R.string.preferences_random_default)));
-//    		} else if (key.equals(res.getString(R.string.preferences_rotate_key))) {
-//    			mRotate = sharedPreferences.getBoolean(key,
-//    					Boolean.valueOf(res.getString(R.string.preferences_rotate_default)));
-//    		} else if (key.equals(res.getString(R.string.preferences_scroll_key))) {
-//    			mScroll = sharedPreferences.getBoolean(key,
-//    					Boolean.valueOf(res.getString(R.string.preferences_scroll_default)));
-//    			if (mScroll == true) {
-//    				mLastDrawTime = 0;
-//    			}
-//    		} else if (key.equals(res.getString(R.string.preferences_recurse_key))) {
-//    			mRecurse = sharedPreferences.getBoolean(key,
-//    					Boolean.valueOf(res.getString(R.string.preferences_recurse_default)));
-//    		} else if (key.equals(res.getString(R.string.preferences_doubletap_key))) {
-//    			mTouchEvents = sharedPreferences.getBoolean(key,
-//    					Boolean.valueOf(res.getString(R.string.preferences_doubletap_default)));
-//    		} else if (key.equals(res.getString(R.string.preferences_screen_awake_key))) {
-//    			mScreenWake = sharedPreferences.getBoolean(key,
-//    					Boolean.valueOf(res.getString(R.string.preferences_screen_awake_default)));
-//    		}
+            if(key == null) {
+                mFit = WallPaperUtils.getDisplayMode() == DISPLAY_MODE.FIT.ordinal();
+                mFill = WallPaperUtils.getDisplayMode() == DISPLAY_MODE.FILL.ordinal();
+                mScroll = WallPaperUtils.isScrolling();
+            }else {
+                if(key.equals(Constants.RANDOM_ORDER_KEY)) {
+                    mLastDrawTime = 0;
+                    drawFrame();
+                }else if(key.equals(Constants.CHANGE_SCROLLING_KEY) && movie == null){
+                    mScroll = WallPaperUtils.isScrolling();
+                    if(mBitmap != null)
+                        mBitmap.recycle();
+                    drawFrame();
+                }else if(key.equals(Constants.GREY_SCALE_KEY) || key.equals(Constants.DIM_KEY) || key.equals(Constants.BLURRING_KEY)) {
+                    if (mBitmap != null)
+                        mBitmap.recycle();
+                    drawFrame();
+                }else if(key.equals(Constants.CHANGE_DISPLAY_MODE_KEY) && movie == null){
+                    if(WallPaperUtils.getDisplayMode() == DISPLAY_MODE.FIT.ordinal()){
+                        mFit = true;
+                        mFill = false;
+                    }else{
+                        mFit = false;
+                        mFill = true;
+                    }
+                    if(mBitmap != null)
+                        mBitmap.recycle();
+                    drawFrame();
+                }
+            }
         }
 
         void tick() {
@@ -394,7 +381,7 @@ public class WallpaperSlideshow extends WallpaperService {
                 if (getImage) {
                     movie = null;
                     // Read file to bitmap
-                    mBitmapPath = WallPaperUtils.getRandomImage();
+                    mBitmapPath = WallPaperUtils.getImages();
                     if (mBitmapPath == null || mBitmapPath.isEmpty())
                         throw new NoImagesInFolderException();
                     InputStream stream = getContentResolver().openInputStream(Uri.parse(mBitmapPath));
@@ -412,7 +399,7 @@ public class WallpaperSlideshow extends WallpaperService {
                     } else {
                         isGif = false;
                         movie = null;
-                        mBitmap = getFillBitmap(mBitmapPath);
+                        mBitmap = getFormattedBitmap(mBitmapPath);
                     }
                     // Save the current time
                     mLastDrawTime = System.currentTimeMillis();
@@ -432,10 +419,11 @@ public class WallpaperSlideshow extends WallpaperService {
                     } else {
                         isGif = false;
                         movie = null;
-                        mBitmap = getFillBitmap(mBitmapPath);
+                        mBitmap = getFormattedBitmap(mBitmapPath);
                     }
                 }
             } catch (NoImagesInFolderException noie) {
+                GATrackerManager.getInstance().trackException(noie);
                 c.drawColor(Color.BLACK);
                 c.translate(0, 30);
                 c.drawText("No photos found in selected folder, ",
@@ -445,9 +433,11 @@ public class WallpaperSlideshow extends WallpaperService {
                 holder.unlockCanvasAndPost(c);
                 return;
             } catch (RuntimeException re) {
+                GATrackerManager.getInstance().trackException(re);
                 holder.unlockCanvasAndPost(c);
                 return;
             } catch (FileNotFoundException e) {
+                GATrackerManager.getInstance().trackException(e);
                 e.printStackTrace();
                 c.drawColor(Color.BLACK);
                 c.translate(0, 30);
@@ -461,36 +451,37 @@ public class WallpaperSlideshow extends WallpaperService {
             try {
                 if (c != null) {
                     int xPos;
-                    int yPos;
+                    int yPos = 0;
                     if (mScroll) {
-                        xPos = 0 - (int) (mWidth * mXOffset);
-                        yPos = 0;
+                        xPos = 10 - (int) (mWidth * mXOffset);
                     } else {
                         xPos = 0;
                         yPos = 0;
                     }
+
+                    if(mFill || mOriginalHeight > mOriginalWidth) {
+                        yPos = 0;
+                    }else if(mFit && mScroll){
+                        float scale = 0;
+                        if(mBitmap.getWidth() > mMinWidth)
+                             scale = (float)mBitmap.getWidth() / (float) mMinWidth;
+                        else
+                            scale = (float) mMinWidth / (float)mBitmap.getWidth();
+
+                        yPos = (int) ((mMinHeight / 2 - ((float) mBitmap.getHeight() * scale / 2)) / scale);
+                    }else if(mFit){
+                        float scale = 0;
+                        if(mBitmap.getWidth() > mWidth)
+                            scale = (float)mBitmap.getWidth() / (float) mWidth;
+                        else
+                            scale = (float) mWidth / (float)mBitmap.getWidth();
+
+                        yPos = (int) ((mHeight / 2 - ((float) mBitmap.getHeight() * scale / 2)) / scale);
+                    }
+
                     try {
                         if (!isGif) {
                             c.drawColor(Color.BLACK);
-//							mHomePagesCount = (1/mXSteps) + 1;
-//							int newWidth = (int)(mWidth * mHomePagesCount);
-//							float ratio = 0;
-//							if(mBitmap.getWidth() > newWidth)
-//								ratio = ((float)mBitmap.getWidth()/ (float)newWidth);
-//							else
-//								ratio = newWidth / mBitmap.getWidth();
-//
-//							int newHeight = (int)(mBitmap.getHeight() / ratio);
-//
-//							mBitmap = Bitmap.createScaledBitmap(mBitmap, newWidth, newHeight, true);
-//
-//							Rect src = new Rect(xPos,yPos,mBitmap.getWidth()-1, mBitmap.getHeight()-1);
-//							Rect dest = new Rect(xPos,yPos,newWidth-1, newHeight-1);
-//							c.drawBitmap(mBitmap, src, dest, null);
-
-//							c.scale(scale ,hScale);
-                            float scale = (float)mBitmap.getWidth() / (float) mWidth;
-//                            (mHeight / 2 - ((float) mBitmap.getHeight() * scale / 2)) / scale
                             c.drawBitmap(mBitmap, xPos, yPos , mPaint);
                         } else {
                             c.drawColor(Color.BLACK);
@@ -521,168 +512,67 @@ public class WallpaperSlideshow extends WallpaperService {
             }
         }
 
-        private Bitmap getFitBitmap(String filePath){
-            mHomePagesCount = (1 / mXSteps) + 1;
-//			mMinWidth = (int)(mWidth * mHomePagesCount);
-            int targetWidth = (mScroll) ? mMinWidth : mWidth;
-            int targetHeight = (mScroll) ? mMinHeight : mHeight;
+        private Bitmap getFormattedBitmap(String file) {
+            int targetWidth = (mScroll)? mMinWidth: mWidth;
+            int targetHeight = (mScroll)? mMinHeight: mHeight;
 
             Bitmap bitmap = BitmapUtil.makeBitmap(WallpaperApp.getWallpaperApp(), Math.max(mMinWidth, mMinHeight),
-                    mMinWidth * mMinHeight, filePath, null);
+                    mMinWidth * mMinHeight, file, null);
 
-            targetHeight = bitmap.getHeight();
+            if(mFit && mScroll && bitmap.getWidth() > bitmap.getHeight()){
+                targetWidth = mMinWidth;
+                targetHeight = bitmap.getHeight();
+
+            }else if(mFit && bitmap.getWidth() > bitmap.getHeight()){
+
+                targetWidth = mWidth;
+                float scale;
+                if(bitmap.getWidth() > mWidth)
+                    scale = (float)bitmap.getWidth() / (float) ((mScroll) ? mMinWidth : mWidth);
+                else
+                    scale = (float) ((mScroll) ? mMinWidth : mWidth) / (float)bitmap.getWidth();
+
+                targetHeight = (int)(bitmap.getHeight()/ scale);
+            }else if(mFit && mScroll && bitmap.getHeight() > bitmap.getWidth()){
+                targetWidth = mWidth;
+                targetHeight = mHeight;
+
+            }
 
             if (bitmap == null) {
                 return Bitmap.createBitmap(targetWidth, targetHeight,
                         Bitmap.Config.ARGB_8888);
             }
 
-
-            int width = bitmap.getWidth();
-            int height = bitmap.getHeight();
+            mOriginalWidth = bitmap.getWidth();
+            mOriginalHeight = bitmap.getHeight();
 
             // Rotate
             if (mRotate) {
                 int screenOrientation = getResources().getConfiguration().orientation;
-                if (width > height
+                if (mOriginalWidth > mOriginalHeight
                         && screenOrientation == Configuration.ORIENTATION_PORTRAIT) {
                     bitmap = BitmapUtil.rotate(bitmap, 90, mScaler);
-                } else if (height > width
+                }
+                else if (mOriginalHeight > mOriginalWidth
                         && screenOrientation == Configuration.ORIENTATION_LANDSCAPE) {
                     bitmap = BitmapUtil.rotate(bitmap, -90, mScaler);
                 }
             }
 
             // Scale bitmap
-            if (width != targetWidth || height != targetHeight) {
+            if (mOriginalWidth != targetWidth || mOriginalHeight != targetHeight) {
                 bitmap = BitmapUtil.transform(mScaler, bitmap,
                         targetWidth, targetHeight, true, true);
             }
 
-            return bitmap;
-        }
+            GlideBlurringTransformation glideBlurringTransformation = new GlideBlurringTransformation(mContext, WallPaperUtils.getCurrentBlurring(), WallPaperUtils.getCurrentGreyScale(), WallPaperUtils.getCurrentDim());
 
-        private Bitmap getFillBitmap(String filePath){
-            int targetWidth = (mScroll) ? mMinWidth : mWidth;
-            int targetHeight = (mScroll) ? mMinHeight : mHeight;
-
-            Bitmap bitmap = BitmapUtil.makeBitmap(WallpaperApp.getWallpaperApp(), Math.max(mMinWidth, mMinHeight),
-                    mMinWidth * mMinHeight, filePath, null);
-
-            if (bitmap == null) {
-                return Bitmap.createBitmap(targetWidth, targetHeight,
-                        Bitmap.Config.ARGB_8888);
-            }
-
-
-            int width = bitmap.getWidth();
-            int height = bitmap.getHeight();
-
-            // Rotate
-            if (mRotate) {
-                int screenOrientation = getResources().getConfiguration().orientation;
-                if (width > height
-                        && screenOrientation == Configuration.ORIENTATION_PORTRAIT) {
-                    bitmap = BitmapUtil.rotate(bitmap, 90, mScaler);
-                } else if (height > width
-                        && screenOrientation == Configuration.ORIENTATION_LANDSCAPE) {
-                    bitmap = BitmapUtil.rotate(bitmap, -90, mScaler);
-                }
-            }
-
-            // Scale bitmap
-            if (width != targetWidth || height != targetHeight) {
-                bitmap = BitmapUtil.transform(mScaler, bitmap,
-                        targetWidth, targetHeight, true, true);
-            }
+            bitmap =  glideBlurringTransformation.transform(BitmapResource.obtain(bitmap, Glide.get(mContext).getBitmapPool()), bitmap.getWidth(), bitmap.getHeight()).get();
 
             return bitmap;
         }
 
-        private Bitmap getFitBitmapWithoutScroll(String filePath){
-            mHomePagesCount = (1 / mXSteps) + 1;
-//			mMinWidth = (int)(mWidth * mHomePagesCount);
-            int targetWidth = (mScroll) ? mMinWidth : mWidth;
-            int targetHeight = (mScroll) ? mMinHeight : mHeight;
-
-            Bitmap bitmap = BitmapUtil.makeBitmap(WallpaperApp.getWallpaperApp(), Math.max(mWidth, mMinHeight),
-                    mWidth * mMinHeight, filePath, null);
-
-            targetWidth = mWidth;
-            targetHeight = (int)(bitmap.getHeight()/ 1.7);
-
-            if (bitmap == null) {
-                return Bitmap.createBitmap(targetWidth, targetHeight,
-                        Bitmap.Config.ARGB_8888);
-            }
-
-
-            int width = bitmap.getWidth();
-            int height = bitmap.getHeight();
-
-            // Rotate
-            if (mRotate) {
-                int screenOrientation = getResources().getConfiguration().orientation;
-                if (width > height
-                        && screenOrientation == Configuration.ORIENTATION_PORTRAIT) {
-                    bitmap = BitmapUtil.rotate(bitmap, 90, mScaler);
-                } else if (height > width
-                        && screenOrientation == Configuration.ORIENTATION_LANDSCAPE) {
-                    bitmap = BitmapUtil.rotate(bitmap, -90, mScaler);
-                }
-            }
-
-            // Scale bitmap
-            if (width != targetWidth || height != targetHeight) {
-                bitmap = BitmapUtil.transform(mScaler, bitmap,
-                        targetWidth, targetHeight, true, true);
-            }
-
-            return bitmap;
-        }
-
-        private Bitmap getFormattedBitmap(String filePath) {
-            mHomePagesCount = (1 / mXSteps) + 1;
-//			mMinWidth = (int)(mWidth * mHomePagesCount);
-            int targetWidth = (mScroll) ? mMinWidth : mWidth;
-            int targetHeight = (mScroll) ? mMinHeight : mHeight;
-
-            Bitmap bitmap = BitmapUtil.makeBitmap(WallpaperApp.getWallpaperApp(), Math.max(mMinWidth, mMinHeight),
-                    mWidth * mMinHeight, filePath, null);
-
-            targetWidth = mWidth;
-            float scale = (float)bitmap.getWidth() / (float) mWidth;
-            targetHeight = (int)(bitmap.getHeight()/ scale);
-
-            if (bitmap == null) {
-                return Bitmap.createBitmap(targetWidth, targetHeight,
-                        Bitmap.Config.ARGB_8888);
-            }
-
-
-            int width = bitmap.getWidth();
-            int height = bitmap.getHeight();
-
-            // Rotate
-            if (mRotate) {
-                int screenOrientation = getResources().getConfiguration().orientation;
-                if (width > height
-                        && screenOrientation == Configuration.ORIENTATION_PORTRAIT) {
-                    bitmap = BitmapUtil.rotate(bitmap, 90, mScaler);
-                } else if (height > width
-                        && screenOrientation == Configuration.ORIENTATION_LANDSCAPE) {
-                    bitmap = BitmapUtil.rotate(bitmap, -90, mScaler);
-                }
-            }
-
-            // Scale bitmap
-            if (width != targetWidth || height != targetHeight) {
-                bitmap = BitmapUtil.transform(mScaler, bitmap,
-                        targetWidth, targetHeight, true, true);
-            }
-
-            return bitmap;
-        }
 
 
         public String getFileExt(String fileName) {

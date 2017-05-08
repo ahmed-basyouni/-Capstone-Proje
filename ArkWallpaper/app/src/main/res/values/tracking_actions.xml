@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="albums">Albums</string>
+    <string name="addNewAlbum">Add new Album</string>
+    <string name="fromGallery">From Gallery</string>
+    <string name="fromTumblr">From Tumblr</string>
+    <string name="from500Px">From 500Px</string>
+    <string name="change">Change</string>
+    <string name="fit">Fit</string>
+    <string name="changeScrolling">Change Scrolling</string>
+    <string name="changeOrder">Change Image Order Random</string>
+</resources>

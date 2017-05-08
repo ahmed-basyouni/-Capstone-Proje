@@ -29,6 +29,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ark.android.arkanalytics.GATrackerManager;
 import com.ark.android.arkwallpaper.R;
 import com.ark.android.arkwallpaper.data.model.AlbumObject;
 import com.ark.android.arkwallpaper.presenter.contract.AlbumFragmentContract;
@@ -54,8 +55,8 @@ import rx.functions.Action1;
  * Created by ahmed-basyouni on 4/22/17.
  */
 
-public class AlbumsFragment extends Fragment implements
-        HomeContract.OnHomePagerChange, AlbumFragmentContract.IAlbumsView
+public class AlbumsFragment extends BaseFragment implements
+        AlbumFragmentContract.IAlbumsView
         , LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
 
     @BindView(R.id.albumsList)
@@ -198,10 +199,6 @@ public class AlbumsFragment extends Fragment implements
         fivePxDialog.show();
     }
 
-    @Override
-    public void onFragmentSelected() {
-
-    }
 
     @Override
     public RecyclerView getAlbumList() {
@@ -280,14 +277,23 @@ public class AlbumsFragment extends Fragment implements
                 break;
             case R.id.addAlbum:
                 showAddAlbumDialog(false, null, null);
+                GATrackerManager.getInstance().trackEvent(getString(R.string.albums)
+                                                         , getString(R.string.addNewAlbum),
+                                                           getString(R.string.fromGallery));
                 animateFAB();
                 break;
             case R.id.addTumblr:
                 showAddAlbumDialog(true, null, getTumblrAction());
+                GATrackerManager.getInstance().trackEvent(getString(R.string.albums)
+                        , getString(R.string.addNewAlbum),
+                        getString(R.string.fromTumblr));
                 animateFAB();
                 break;
             case R.id.addFive:
                 showAdd500PxDialog(0, null);
+                GATrackerManager.getInstance().trackEvent(getString(R.string.albums)
+                        , getString(R.string.addNewAlbum),
+                        getString(R.string.from500Px));
                 animateFAB();
                 break;
         }
@@ -396,4 +402,8 @@ public class AlbumsFragment extends Fragment implements
         }
     }
 
+    @Override
+    protected String getFragmentTitle() {
+        return getString(R.string.albumsFragment);
+    }
 }

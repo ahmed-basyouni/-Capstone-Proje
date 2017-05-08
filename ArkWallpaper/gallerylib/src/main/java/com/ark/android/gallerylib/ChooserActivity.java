@@ -22,6 +22,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import com.ark.android.arkanalytics.GATrackerManager;
 import com.ark.android.gallerylib.data.GallaryDataBaseContract;
 import com.ark.android.gallerylib.util.GallaryUtils;
 
@@ -93,6 +94,7 @@ public class ChooserActivity extends AppCompatActivity {
         try {
             startActivityForResult(intent, IMAGE_CHOOSER_REQUEST);
         } catch (ActivityNotFoundException e) {
+            GATrackerManager.getInstance().trackException(e);
             setCancelResult(CancelReason.REASON_IMAGE_ACTIVITY_NOT_FOUND);
         }
     }
@@ -103,6 +105,7 @@ public class ChooserActivity extends AppCompatActivity {
             startActivityForResult(intent, FOLDER_CHOOSER_REQUEST);
             
         }catch (ActivityNotFoundException ex){
+            GATrackerManager.getInstance().trackException(ex);
             setCancelResult(CancelReason.REASON_FOLDER_ACTIVITY_NOT_FOUND);
         }
     }
@@ -184,6 +187,7 @@ public class ChooserActivity extends AppCompatActivity {
                 try {
                     getContentResolver().applyBatch(GallaryDataBaseContract.GALLERY_AUTHORITY, operations);
                 } catch (RemoteException | OperationApplicationException e) {
+                    GATrackerManager.getInstance().trackException(e);
                     Log.e(TAG, "Error writing uris to ContentProvider", e);
                 }finally {
                     setResult(Activity.RESULT_OK);

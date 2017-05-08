@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:orientation="vertical">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/changeImageContainerHeight"
+            android:layout_margin="@dimen/cardView_margin"
+            android:elevation="@dimen/default_elevation">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:padding="@dimen/smallPadding">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/imagePositionSettings"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@android:color/black"
+                    tools:text="Image Position" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/smallPadding"
+                    android:text="@string/imagePositionDescribtion"
+                    tools:text="How to handle images which don't fit to the home screen" />
+
+                <RadioGroup
+                    android:id="@+id/displayModeOption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <RadioButton
+                        android:id="@+id/displayModeFill"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:padding="@dimen/smallPadding"
+                        android:text="@string/displayModeFill" />
+
+                    <RadioButton
+                        android:id="@+id/displayModeFit"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:padding="@dimen/smallPadding"
+                        android:text="@string/displayModeFit" />
+
+                </RadioGroup>
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/doubleCardHeight"
+            android:layout_margin="@dimen/cardView_margin"
+            android:elevation="@dimen/default_elevation">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:padding="@dimen/smallPadding">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/imageScrollOption"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@android:color/black"
+                    tools:text="Image Scrolling" />
+
+                <CheckBox
+                    android:id="@+id/imageScrolling"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/scrollImageCheckBox"
+                    android:textColor="@color/text_secondary"
+                    tools:text="Scroll Images in home screen" />
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/doubleCardHeight"
+            android:layout_margin="@dimen/cardView_margin"
+            android:elevation="@dimen/default_elevation">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:padding="@dimen/smallPadding">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/randomImage"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@android:color/black"
+                    tools:text="Image Scrolling" />
+
+                <CheckBox
+                    android:id="@+id/randomOrder"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/randomImageOrder"
+                    android:textColor="@color/text_secondary"
+                    tools:text="Random Wallpaper Order" />
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/lastWallpaperContainer"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/changeImageContainerHeight"
+            android:layout_margin="@dimen/cardView_margin"
+            android:elevation="@dimen/default_elevation">
+
+            <ImageView
+                android:id="@+id/lastSetImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clickable="false"
+                android:contentDescription="@string/lastWallpaper"
+                android:scaleType="centerCrop"
+                android:transitionName="@string/expandedImageView" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/elevated_info"
+                android:text="@string/customizeImageTitle"
+                android:padding="@dimen/smallPadding"
+                android:clickable="false"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/black"
+                tools:text="Customize Image" />
+
+        </android.support.v7.widget.CardView>
+
+    </LinearLayout>
+
+</ScrollView>

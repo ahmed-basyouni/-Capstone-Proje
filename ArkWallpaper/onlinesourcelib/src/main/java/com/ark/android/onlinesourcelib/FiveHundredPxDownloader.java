@@ -21,6 +21,8 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.ark.android.arkanalytics.GATrackerManager;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Random;
@@ -72,6 +74,7 @@ public class FiveHundredPxDownloader {
         try {
             response = service.get500xPhotos().execute().body();
         } catch (IOException e) {
+            GATrackerManager.getInstance().trackException(e);
             e.printStackTrace();
             return null;
         }

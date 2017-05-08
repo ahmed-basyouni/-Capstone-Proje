@@ -42,6 +42,29 @@
     <string name="changeValueIsEmpty">Please enter a valid value</string>
     <string name="emptyAlbum">Album is empty</string>
     <string name="expandedImageView">expandedImageView</string>
+    <string name="displayModeFill">Fill</string>
+    <string name="displayModeFit">Fit</string>
+    <string name="displayModeNormal">Display: %1$s x %2$s px</string>
+    <string name="displayModeLauncher">Launcher: %1$s x %2$s px</string>
+    <string name="imagePositionSettings">Image Position</string>
+    <string name="imagePositionDescribtion">How to handle images which don\'t fit to the home screen</string>
+    <string name="imageScrollOption">Image Scrolling</string>
+    <string name="scrollImageCheckBox">Scroll Images in home screen</string>
+    <string name="randomImageOrder">Random Wallpaper Order</string>
+    <string name="customizeImageTitle">Customize Image</string>
+    <string name="customizeImageDesc">Change image blurring, dim and grey scale</string>
+    <string name="Blur">Blur</string>
+    <string name="Dim">Dim</string>
+    <string name="Greyscale">Grey</string>
+    <string name="customize">Customize Image</string>
+    <string name="randomImage">Random Image</string>
+    <string name="albumsFragment">Albums Fragment</string>
+    <string name="changeFragment">Change Fragment</string>
+    <string name="settingsFragment">Settings Fragment</string>
+    <string name="customizeActivity">Customize Activity</string>
+    <string name="settings">Settings</string>
+    <string name="changeDisplayMode">Change Display Mode</string>
+    <string name="fill">Fill</string>
 
     <string-array name="fivePx_Cat">
         <item>All</item>

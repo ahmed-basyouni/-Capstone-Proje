@@ -26,6 +26,8 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.util.Log;
 
+import com.ark.android.arkanalytics.GATrackerManager;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
@@ -251,6 +253,7 @@ public class BitmapUtil {
             Log.e(TAG, "Got oom exception ", ex);
             return null;
         } catch (FileNotFoundException e) {
+            GATrackerManager.getInstance().trackException(e);
             e.printStackTrace();
             return null;
         }

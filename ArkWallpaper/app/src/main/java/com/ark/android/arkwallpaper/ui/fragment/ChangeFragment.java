@@ -28,6 +28,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ark.android.arkanalytics.GATrackerManager;
 import com.ark.android.arkwallpaper.Constants;
 import com.ark.android.arkwallpaper.R;
 import com.ark.android.arkwallpaper.WallpaperApp;
@@ -45,8 +46,8 @@ import butterknife.ButterKnife;
  * Created by ahmed-basyouni on 4/17/17.
  */
 
-public class ChangeFragment extends Fragment implements HomeContract.OnHomePagerChange
-        , CompoundButton.OnCheckedChangeListener
+public class ChangeFragment extends BaseFragment implements
+        CompoundButton.OnCheckedChangeListener
         , TextWatcher, AdapterView.OnItemSelectedListener, SharedPreferences.OnSharedPreferenceChangeListener, View.OnClickListener {
 
     @BindView(R.id.lastWallpaperContainer)
@@ -65,11 +66,6 @@ public class ChangeFragment extends Fragment implements HomeContract.OnHomePager
     CheckBox changeWithDoubleTap;
     @BindView(R.id.lastImageText)
     TextView lastImageText;
-
-    @Override
-    public void onFragmentSelected() {
-
-    }
 
     @Nullable
     @Override
@@ -146,14 +142,24 @@ public class ChangeFragment extends Fragment implements HomeContract.OnHomePager
                     WallPaperUtils.setChangeInterval(Integer.parseInt(changeEveryField.getText().toString())
                             , Constants.INTERVAL_MODE.values()[changeEveryUnit.getSelectedItemPosition()]);
 
+                GATrackerManager.getInstance().trackEvent(getString(R.string.change)
+                        , getString(R.string.changeEvery),
+                        changeEveryField.getText().toString());
+
                 break;
 
             case R.id.changeWithDoubleTap:
                 WallPaperUtils.setChangeWithDoubleTap(isChecked);
+                GATrackerManager.getInstance().trackEvent(getString(R.string.change)
+                        , getString(R.string.changeWithDoubleTap),
+                        String.valueOf(isChecked));
                 break;
 
             case R.id.changeWithUnlock:
                 WallPaperUtils.setChangeWithUnlock(isChecked);
+                GATrackerManager.getInstance().trackEvent(getString(R.string.change)
+                        , getString(R.string.changeWithUnlock),
+                        String.valueOf(isChecked));
                 break;
         }
     }
@@ -223,5 +229,10 @@ public class ChangeFragment extends Fragment implements HomeContract.OnHomePager
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    protected String getFragmentTitle() {
+        return getString(R.string.changeFragment);
     }
 }

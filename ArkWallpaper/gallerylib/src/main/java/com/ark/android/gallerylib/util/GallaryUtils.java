@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.DocumentsContract;
 
+import com.ark.android.arkanalytics.GATrackerManager;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,6 +33,7 @@ public class GallaryUtils {
                         new String[]{DocumentsContract.Document.COLUMN_DOCUMENT_ID, DocumentsContract.Document.COLUMN_MIME_TYPE},
                         null, null, null);
             } catch (SecurityException e) {
+                GATrackerManager.getInstance().trackException(e);
                 // No longer can read this URI, which means no images from this URI
                 // This a temporary state as the next onLoadFinished() will remove this item entirely
                 children = null;

@@ -18,6 +18,10 @@ package com.ark.android.arkwallpaper.utils.uiutils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Paint;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.Matrix3f;
@@ -46,12 +50,16 @@ public class ImageBlurrer {
     }
 
     public Bitmap blurBitmap(float radius, float desaturateAmount) {
+        return blurBitmap(radius, desaturateAmount, 0);
+    }
+
+    public Bitmap blurBitmap(float radius, float desaturateAmount, float brightness){
         if (mSourceBitmap == null) {
             return null;
         }
 
         Bitmap dest = mSourceBitmap.copy(mSourceBitmap.getConfig(), true);
-        if (radius == 0f && desaturateAmount == 0f) {
+        if (radius == 0f && desaturateAmount == 0f && brightness == 0f) {
             return dest;
         }
 
@@ -69,13 +77,30 @@ public class ImageBlurrer {
             allocationDest.copyTo(dest);
         }
         allocationDest.destroy();
-        return dest;
+        return setBrightness(dest, brightness);
     }
 
     private void doBlur(float amount, Allocation input, Allocation output) {
         mSIBlur.setRadius(amount);
         mSIBlur.setInput(input);
         mSIBlur.forEach(output);
+    }
+
+    private Bitmap setBrightness(Bitmap bmp, float brightness) {
+        ColorMatrix cm = new ColorMatrix(new float[] { 1, 0, 0, 0,
+                brightness, 0, 1, 0, 0, brightness, 0, 0, 1, 0,
+                brightness, 0, 0, 0, 1, 0 });
+
+        Bitmap ret = Bitmap.createBitmap(bmp.getWidth(), bmp.getHeight(),
+                bmp.getConfig());
+
+        Canvas canvas = new Canvas(ret);
+
+        Paint paint = new Paint();
+        paint.setColorFilter(new ColorMatrixColorFilter(cm));
+        canvas.drawBitmap(bmp, 0, 0, paint);
+
+        return ret;
     }
 
     private void doDesaturate(float normalizedAmount, Allocation input, Allocation output) {

@@ -4,6 +4,8 @@ import android.app.Application;
 import android.os.Handler;
 import android.os.Looper;
 
+import com.ark.android.arkanalytics.GATracker;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -27,6 +29,7 @@ public class WallpaperApp extends Application {
         super.onCreate();
         instance = this;
         executorService = Executors.newFixedThreadPool(CORE_POOL_SIZE);
+        GATracker.initialize(this);
     }
 
     public static WallpaperApp getWallpaperApp() {

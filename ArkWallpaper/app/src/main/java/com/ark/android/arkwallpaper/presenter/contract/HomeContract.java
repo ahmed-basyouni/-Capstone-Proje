@@ -19,14 +19,9 @@ public interface HomeContract {
         void setupIndicator();
         ViewPager getHomePager();
         SpringIndicator getIndicator();
-        List<OnHomePagerChange> getHomeFragment();
     }
 
     interface IHomePresenter{
 
-    }
-
-    interface OnHomePagerChange{
-        void onFragmentSelected();
     }
 }

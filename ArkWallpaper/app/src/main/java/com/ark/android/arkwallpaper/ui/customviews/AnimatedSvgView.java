@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 
+import com.ark.android.arkanalytics.GATrackerManager;
 import com.ark.android.arkwallpaper.R;
 import com.ark.android.arkwallpaper.utils.MathUtil;
 import com.ark.android.arkwallpaper.utils.SvgPathParser;
@@ -214,6 +215,7 @@ public class AnimatedSvgView extends View {
             try {
                 mGlyphData[i].path = parser.parsePath(mGlyphStrings[i]);
             } catch (ParseException e) {
+                GATrackerManager.getInstance().trackException(e);
                 mGlyphData[i].path = new Path();
                 Log.e(TAG, "Couldn't parse path", e);
             }

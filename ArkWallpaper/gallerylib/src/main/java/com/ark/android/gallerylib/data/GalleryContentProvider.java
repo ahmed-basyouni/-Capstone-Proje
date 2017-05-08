@@ -27,6 +27,8 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.ark.android.arkanalytics.GATrackerManager;
+
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -211,6 +213,7 @@ public class GalleryContentProvider extends ContentProvider {
             try {
                 context.getContentResolver().takePersistableUriPermission(uriToTake, Intent.FLAG_GRANT_READ_URI_PERMISSION);
             } catch (SecurityException ignored) {
+                GATrackerManager.getInstance().trackException(ignored);
                 ignored.printStackTrace();
                 // You can't persist URI permissions from your own app, so this fails.
                 // We'll still have access to it directly
@@ -232,6 +235,7 @@ public class GalleryContentProvider extends ContentProvider {
                         persistedPermission = true;
                         // If we have a persisted URI permission, we don't need a local copy
                     } catch (SecurityException ignored) {
+                        GATrackerManager.getInstance().trackException(ignored);
                         // If we don't have FLAG_GRANT_PERSISTABLE_URI_PERMISSION (such as when using ACTION_GET_CONTENT),
                         // this will fail. We'll need to make a local copy (handled below)
                     }
@@ -290,6 +294,7 @@ public class GalleryContentProvider extends ContentProvider {
         try {
             return getContext().getContentResolver().openFileDescriptor(Uri.parse(imageUri), mode);
         } catch (SecurityException | IllegalArgumentException e) {
+            GATrackerManager.getInstance().trackException(e);
             Log.d(TAG, "Unable to load " + uri + ", deleting the row", e);
             deleteGalleryImage(uri, null, null);
             throw new FileNotFoundException("No permission to load " + uri);

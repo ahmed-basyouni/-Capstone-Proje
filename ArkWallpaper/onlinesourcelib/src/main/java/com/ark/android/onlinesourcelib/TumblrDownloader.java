@@ -22,6 +22,8 @@ package com.ark.android.onlinesourcelib;
  */
 
 
+import com.ark.android.arkanalytics.GATrackerManager;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -72,6 +74,7 @@ public class TumblrDownloader {
         try {
             response = service.get500xPhotos().execute().body();
         } catch (IOException e) {
+            GATrackerManager.getInstance().trackException(e);
             e.printStackTrace();
             return null;
         }

@@ -2,6 +2,8 @@ package com.ark.android.arkwallpaper.utils;
 
 import android.os.Environment;
 
+import com.ark.android.arkanalytics.GATrackerManager;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -39,6 +41,7 @@ public class IOUtils {
             inChannel = new FileInputStream(src).getChannel();
             outChannel = new FileOutputStream(dst).getChannel();
         } catch (FileNotFoundException e) {
+            GATrackerManager.getInstance().trackException(e);
             e.printStackTrace();
             return null;
         }
@@ -50,12 +53,14 @@ public class IOUtils {
                 try {
                     inChannel.close();
                 } catch (IOException ex) {
+                    GATrackerManager.getInstance().trackException(ex);
                     ex.printStackTrace();
                 }
             if (outChannel != null)
                 try {
                     outChannel.close();
                 } catch (IOException ex) {
+                    GATrackerManager.getInstance().trackException(ex);
                     ex.printStackTrace();
                 }
 

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -124,14 +125,10 @@ public class HomeActivity extends BaseActivity implements HomeContract.IHomeView
         return springIndicator;
     }
 
-    @Override
-    public List<HomeContract.OnHomePagerChange> getHomeFragment() {
-        return homePagerAdapter.getFragmentsList();
-    }
 
     @Override
     public void setupPager() {
-        List<HomeContract.OnHomePagerChange> fragments = new ArrayList<>();
+        List<Fragment> fragments = new ArrayList<>();
         fragments.add(new ChangeFragment());
         fragments.add(new AlbumsFragment());
         fragments.add(new SettingsFragment());

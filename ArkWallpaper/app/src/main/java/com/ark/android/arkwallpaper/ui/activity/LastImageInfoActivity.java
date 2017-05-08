@@ -14,13 +14,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ark.android.arkanalytics.GATrackerManager;
 import com.ark.android.arkwallpaper.R;
 import com.ark.android.arkwallpaper.utils.IOUtils;
 import com.ark.android.arkwallpaper.utils.WallPaperUtils;
 import com.ark.android.arkwallpaper.utils.uiutils.GlideContentProviderLoader;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.google.gson.annotations.SerializedName;
 
 import java.io.File;
 import java.io.IOException;
@@ -118,6 +118,7 @@ public class LastImageInfoActivity extends AppCompatActivity implements View.OnC
             IOUtils.exportFile(new File(Uri.parse(imageUri).getPath()));
             Toast.makeText(this, getString(R.string.imageSaved), Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
+            GATrackerManager.getInstance().trackException(e);
             e.printStackTrace();
         }
     }
