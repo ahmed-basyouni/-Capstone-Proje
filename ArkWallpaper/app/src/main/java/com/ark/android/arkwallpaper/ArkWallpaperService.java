@@ -120,6 +120,11 @@ public class ArkWallpaperService extends WallpaperService {
                     }
                     return false;
                 }
+
+                @Override
+                public boolean onSingleTapConfirmed(MotionEvent e) {
+                    return super.onSingleTapConfirmed(e);
+                }
             });
         }
 

@@ -7,17 +7,18 @@
     <dimen name="si_default_radius_min">8dp</dimen>
     <dimen name="fab_elevation">6dp</dimen>
     <dimen name="fab_press_translation_z">12dp</dimen>
-    <dimen name="cardView_margin">8dp</dimen>
-    <dimen name="smallPadding">5dp</dimen>
-    <dimen name="textSizeMedium">18sp</dimen>
-    <dimen name="textSizeLarge">20sp</dimen>
+    <dimen name="cardView_margin">20dp</dimen>
+    <dimen name="smallPadding">14dp</dimen>
+    <dimen name="textSizeMedium">24sp</dimen>
+    <dimen name="textSizeLarge">28sp</dimen>
     <dimen name="default_elevation">6dp</dimen>
     <dimen name="default_radius">150dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="progressBarDimen">25dp</dimen>
-    <dimen name="doubleCardHeight">80dp</dimen>
-    <dimen name="changeImageContainerHeight">140dp</dimen>
-    <dimen name="large_margin">30dp</dimen>
-    <dimen name="smallCardHeight">40dp</dimen>
-    <bool name="isTab">false</bool>
+    <dimen name="doubleCardHeight">220dp</dimen>
+    <dimen name="changeImageContainerHeight">280dp</dimen>
+    <dimen name="large_margin">45dp</dimen>
+    <dimen name="smallCardHeight">85dp</dimen>
+    <bool name="isTab">true</bool>
+
 </resources>

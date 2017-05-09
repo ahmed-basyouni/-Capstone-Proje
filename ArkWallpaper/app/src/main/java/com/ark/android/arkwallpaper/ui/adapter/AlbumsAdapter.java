@@ -7,6 +7,7 @@ import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
@@ -105,8 +106,15 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
         });
 
         RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) holder.viewsHolder.getLayoutParams();
-        params.height = this.height / 3;
-        params.width = RecyclerView.LayoutParams.MATCH_PARENT;
+
+        if(context.getResources().getBoolean(R.bool.isTab) && context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+            params.width = (width / 2) - 25;
+            params.height = height / 3;
+        }else{
+            params.height = this.height / 3;
+            params.width = RecyclerView.LayoutParams.MATCH_PARENT;
+        }
+
         holder.viewsHolder.setLayoutParams(params);
 
         holder.albumName.setText(albumObject.getAlbumName());

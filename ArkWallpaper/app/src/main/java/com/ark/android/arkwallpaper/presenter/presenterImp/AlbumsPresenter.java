@@ -1,7 +1,9 @@
 package com.ark.android.arkwallpaper.presenter.presenterImp;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 
@@ -83,8 +85,14 @@ public class AlbumsPresenter implements AlbumFragmentContract.IAlbumsPresenter {
 
     private void setupAdapter() {
         AlbumsAdapter albumsAdapter = new AlbumsAdapter(albums, iAlbumsView.getActivityContext(), this);
-        iAlbumsView.getAlbumList().setLayoutManager(new LinearLayoutManager(iAlbumsView.getActivityContext()));
-        iAlbumsView.getAlbumList().setAdapter(albumsAdapter);
+        if(iAlbumsView.getActivityContext().getResources().getBoolean(R.bool.isTab) && iAlbumsView.getActivityContext().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+            iAlbumsView.getAlbumList().setLayoutManager(new GridLayoutManager(iAlbumsView.getActivityContext(), 2));
+            iAlbumsView.getAlbumList().setAdapter(albumsAdapter);
+        }else{
+            iAlbumsView.getAlbumList().setLayoutManager(new LinearLayoutManager(iAlbumsView.getActivityContext()));
+            iAlbumsView.getAlbumList().setAdapter(albumsAdapter);
+        }
+
     }
 
     @Override
