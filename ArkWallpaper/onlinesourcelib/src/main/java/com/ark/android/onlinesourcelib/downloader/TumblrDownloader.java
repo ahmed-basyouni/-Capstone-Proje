@@ -1,4 +1,4 @@
-package com.ark.android.onlinesourcelib;
+package com.ark.android.onlinesourcelib.downloader;
 
 /**
  * Created by ahmed-basyouni on 4/25/17.

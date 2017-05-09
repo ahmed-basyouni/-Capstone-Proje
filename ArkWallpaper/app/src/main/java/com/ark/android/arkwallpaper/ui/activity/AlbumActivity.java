@@ -35,12 +35,12 @@ import com.ark.android.arkwallpaper.ui.adapter.AlbumAdapter;
 import com.ark.android.gallerylib.CancelReason;
 import com.ark.android.gallerylib.ChooserActivity;
 import com.ark.android.gallerylib.data.GallaryDataBaseContract;
-import com.ark.android.onlinesourcelib.FiveHundredSyncAdapter;
-import com.ark.android.onlinesourcelib.FivePxGenericAccountService;
-import com.ark.android.onlinesourcelib.FivePxSyncUtils;
-import com.ark.android.onlinesourcelib.TumblrGenericAccountService;
-import com.ark.android.onlinesourcelib.TumblrSyncAdapter;
-import com.ark.android.onlinesourcelib.TumblrSyncUtils;
+import com.ark.android.onlinesourcelib.syncadapter.FiveHundredSyncAdapter;
+import com.ark.android.onlinesourcelib.Account.FivePxGenericAccountService;
+import com.ark.android.onlinesourcelib.syncUtils.FivePxSyncUtils;
+import com.ark.android.onlinesourcelib.Account.TumblrGenericAccountService;
+import com.ark.android.onlinesourcelib.syncadapter.TumblrSyncAdapter;
+import com.ark.android.onlinesourcelib.syncUtils.TumblrSyncUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -114,12 +114,12 @@ public class AlbumActivity extends AppCompatActivity implements LoaderManager.Lo
                 if (mAlbumtype == GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_TUMBLR) {
                     Bundle bundle = new Bundle();
                     bundle.putString("albumName", getIntent().getExtras().getString("tumblrBlog"));
-                    TumblrSyncUtils.TriggerRefresh(bundle);
+                    TumblrSyncUtils.getInstance().TriggerRefresh(bundle);
 
                 } else if (mAlbumtype == GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_PX) {
                     Bundle bundle = new Bundle();
                     bundle.putString(FiveHundredSyncAdapter.CAT_KEY, getIntent().getExtras().getString("fivePxCat"));
-                    FivePxSyncUtils.TriggerRefresh(bundle);
+                    FivePxSyncUtils.getInstance().TriggerRefresh(bundle);
                 }
             }
         });

@@ -1,4 +1,4 @@
-package com.ark.android.onlinesourcelib;
+package com.ark.android.onlinesourcelib.downloader;
 
 import java.util.List;
 
@@ -24,15 +24,15 @@ public interface TumblrService {
     }
 
     class Post{
-        List<Photos> photos;
+        public List<Photos> photos;
         String id;
     }
 
     class Photos {
-        OriginalSize original_size;
+        public OriginalSize original_size;
     }
 
     class OriginalSize{
-        String url;
+        public String url;
     }
 }

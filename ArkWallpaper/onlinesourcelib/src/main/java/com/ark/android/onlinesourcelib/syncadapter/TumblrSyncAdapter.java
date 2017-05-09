@@ -1,4 +1,5 @@
-package com.ark.android.onlinesourcelib;
+
+package com.ark.android.onlinesourcelib.syncadapter;
 
 import android.accounts.Account;
 import android.content.AbstractThreadedSyncAdapter;
@@ -13,9 +14,13 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.RemoteException;
+import android.util.Log;
 
 import com.ark.android.arkanalytics.GATrackerManager;
 import com.ark.android.gallerylib.data.GallaryDataBaseContract;
+import com.ark.android.onlinesourcelib.manager.TumblrManager;
+import com.ark.android.onlinesourcelib.downloader.TumblrDownloader;
+import com.ark.android.onlinesourcelib.downloader.TumblrService;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -27,41 +32,39 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * Created by ahmed-basyouni on 4/25/17.
  */
 
-public class FiveHundredSyncAdapter extends AbstractThreadedSyncAdapter {
+public class TumblrSyncAdapter extends AbstractThreadedSyncAdapter {
 
-    public static final String ALBUM_NAME = "500Px";
+    public static final String ALBUM_NAME = "Tumblr";
     private final ContentResolver mContentResolver;
-    private final String CACHE_FOLDER = "500pxFolder";
-    public static final String CAT_KEY = "fivePxCat";
+    private final String CACHE_FOLDER = "TumblerFolder";
+    private final String TAG = TumblrSyncAdapter.class.getSimpleName();
     private ArrayList<ContentProviderOperation> operations = new ArrayList<>();
 
-    public FiveHundredSyncAdapter(Context context, boolean autoInitialize) {
+    public TumblrSyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
         mContentResolver = context.getContentResolver();
     }
 
-    public FiveHundredSyncAdapter(Context context, boolean autoInitialize, boolean allowParallelSyncs) {
+    public TumblrSyncAdapter(Context context, boolean autoInitialize, boolean allowParallelSyncs) {
         super(context, autoInitialize, allowParallelSyncs);
         mContentResolver = context.getContentResolver();
     }
 
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
-        if(!extras.isEmpty()) {
-            if (extras.getBoolean("isPer", false))
-                FivePxManager.getInstance().restOffset(getContext());
-            List<FiveHundredPxService.Photo> photos = FiveHundredPxDownloader.get500PXPhotos(extras.getString(CAT_KEY),
-                    FivePxManager.getInstance().getOffset(getContext()));
+        if(!extras.isEmpty()){
+            if(extras.getBoolean("isPer", false))
+                TumblrManager.getInstance().restOffset(getContext());
+            List<TumblrService.Post> photos = TumblrDownloader.getTumblrPhotos(extras.getString("albumName"), TumblrManager.getInstance().getOffset(getContext()));
             operations.clear();
             if (photos != null) {
                 checkCacheFolder(photos);
-                for (FiveHundredPxService.Photo photo : photos) {
-                    if (!photo.nsfw)
-                        downloadImage(photo);
+                for (TumblrService.Post post : photos) {
+//                if (!photo.nsfw)
+                    downloadImage(post);
                 }
 
                 try {
@@ -70,7 +73,7 @@ public class FiveHundredSyncAdapter extends AbstractThreadedSyncAdapter {
                                 , new String[]{ALBUM_NAME});
                         getContext().getContentResolver().applyBatch(GallaryDataBaseContract.GALLERY_AUTHORITY, operations);
                     }
-                    FivePxManager.getInstance().setOffset(getContext());
+                    TumblrManager.getInstance().setOffset(getContext());
                 } catch (RemoteException | OperationApplicationException e) {
                     GATrackerManager.getInstance().trackException(e);
                     e.printStackTrace();
@@ -79,18 +82,24 @@ public class FiveHundredSyncAdapter extends AbstractThreadedSyncAdapter {
         }
     }
 
-    private void downloadImage(FiveHundredPxService.Photo photo) {
+    private void downloadImage(TumblrService.Post photo) {
         try {
-            URL url = new URL(photo.image_url);
+            Log.d(TAG, "start downloading " + photo.photos.get(0).original_size.url);
+            URL url = new URL(photo.photos.get(0).original_size.url);
             URLConnection conn = url.openConnection();
             String fileName = "";
+            String raw = conn.getHeaderField("Content-Disposition");
 
-            int index = photo.image_url.lastIndexOf("/");
-            fileName = photo.image_url.substring(index + 1) + ".jpg";
-
+            if (raw != null && raw.contains("=")) {
+                fileName = raw.split("=")[1]; //getting value after '='
+            } else {
+                int index = photo.photos.get(0).original_size.url.lastIndexOf("/");
+                fileName = photo.photos.get(0).original_size.url.substring(index+1);
+            }
             conn.connect();
             Uri imageUri = saveImage(conn, fileName);
             if (imageUri != null) {
+                Log.d(TAG, "saving");
                 ContentValues values = new ContentValues();
                 values.put(GallaryDataBaseContract.GalleryTable.COLUMN_NAME_URI, imageUri.toString());
                 values.put(GallaryDataBaseContract.GalleryTable.COLUMN_ALBUM_NAME, ALBUM_NAME);
@@ -118,7 +127,7 @@ public class FiveHundredSyncAdapter extends AbstractThreadedSyncAdapter {
             int bufferLength = 0; //used to store a temporary size of the buffer
 
             //now, read through the input buffer and write the contents to the file
-            while ((bufferLength = inputStream.read(buffer)) > 0) {
+            while ( (bufferLength = inputStream.read(buffer)) > 0 ) {
                 //add the data in the buffer to the file in the file output stream (the file on the sd card
                 out.write(buffer, 0, bufferLength);
             }
@@ -133,7 +142,7 @@ public class FiveHundredSyncAdapter extends AbstractThreadedSyncAdapter {
         return Uri.fromFile(imageFile);
     }
 
-    private void checkCacheFolder(List<FiveHundredPxService.Photo> photos) {
+    private void checkCacheFolder(List<TumblrService.Post> photos) {
         File cacheFolder = getContext().getDir(CACHE_FOLDER, Context.MODE_PRIVATE);
         if (!cacheFolder.exists())
             cacheFolder.mkdirs();
@@ -142,22 +151,23 @@ public class FiveHundredSyncAdapter extends AbstractThreadedSyncAdapter {
         }
     }
 
-    private void deleteCacheContent(File fileOrDirectory, List<FiveHundredPxService.Photo> photos) {
+    private void deleteCacheContent(File fileOrDirectory, List<TumblrService.Post> photos) {
         for (File child : fileOrDirectory.listFiles()) {
             boolean fileAlredyExist = false;
             int position = -1;
             String fileName = "";
-            for (int x = 0; x < photos.size(); x++) {
+            for(int x = 0 ; x < photos.size(); x++){
                 int index = photos
-                        .get(x).image_url.lastIndexOf("/");
+                        .get(x).photos.get(0).original_size.url.lastIndexOf("/");
                 fileName = photos
-                        .get(x).image_url.substring(index + 1) + ".jpg";
-                if (child.getName().equals(fileName)) {
+                        .get(x).photos.get(0).original_size.url.substring(index+1);
+                if(child.getName().equals(fileName)) {
                     fileAlredyExist = true;
                     position = x;
                     break;
                 }
             }
+
             if(position != -1){
                 File cacheFolder = getContext().getDir(CACHE_FOLDER, Context.MODE_PRIVATE);
                 File imageFile = new File(cacheFolder.getAbsolutePath() + File.separator + fileName);
@@ -182,5 +192,10 @@ public class FiveHundredSyncAdapter extends AbstractThreadedSyncAdapter {
             }
         }
 
+    }
+
+    @Override
+    public void onSyncCanceled() {
+        super.onSyncCanceled();
     }
 }

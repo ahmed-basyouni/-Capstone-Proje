@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -33,18 +32,15 @@ import com.ark.android.arkanalytics.GATrackerManager;
 import com.ark.android.arkwallpaper.R;
 import com.ark.android.arkwallpaper.data.model.AlbumObject;
 import com.ark.android.arkwallpaper.presenter.contract.AlbumFragmentContract;
-import com.ark.android.arkwallpaper.presenter.contract.HomeContract;
 import com.ark.android.arkwallpaper.presenter.presenterImp.AlbumsPresenter;
 import com.ark.android.gallerylib.data.GallaryDataBaseContract;
-import com.ark.android.onlinesourcelib.FiveHundredSyncAdapter;
-import com.ark.android.onlinesourcelib.FivePxGenericAccountService;
-import com.ark.android.onlinesourcelib.FivePxSyncUtils;
-import com.ark.android.onlinesourcelib.TumblrGenericAccountService;
-import com.ark.android.onlinesourcelib.TumblrManager;
-import com.ark.android.onlinesourcelib.TumblrSyncAdapter;
-import com.ark.android.onlinesourcelib.TumblrSyncUtils;
-
-import org.w3c.dom.Text;
+import com.ark.android.onlinesourcelib.syncadapter.FiveHundredSyncAdapter;
+import com.ark.android.onlinesourcelib.Account.FivePxGenericAccountService;
+import com.ark.android.onlinesourcelib.syncUtils.FivePxSyncUtils;
+import com.ark.android.onlinesourcelib.Account.TumblrGenericAccountService;
+import com.ark.android.onlinesourcelib.manager.TumblrManager;
+import com.ark.android.onlinesourcelib.syncadapter.TumblrSyncAdapter;
+import com.ark.android.onlinesourcelib.syncUtils.TumblrSyncUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -308,8 +304,9 @@ public class AlbumsFragment extends BaseFragment implements
                     bundle.putString("albumName", albumName);
                     bundle.putBoolean("isPer", true);
                     albumsPresenter.addAlbum(TumblrSyncAdapter.ALBUM_NAME, GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_TUMBLR, null, albumName);
-                    if (!TumblrSyncUtils.CreateSyncAccount(getActivity(), bundle)) {
-                        TumblrSyncUtils.TriggerRefresh(bundle);
+                    if (!TumblrSyncUtils.getInstance().CreateSyncAccount(getActivity(), bundle)) {
+                        TumblrSyncUtils.getInstance().addPeriodicSync(bundle);
+                        TumblrSyncUtils.getInstance().TriggerRefresh(bundle);
                     }
                 } else {
                     Toast.makeText(getActivity(), getString(R.string.blogNotFound), Toast.LENGTH_SHORT).show();
@@ -323,9 +320,9 @@ public class AlbumsFragment extends BaseFragment implements
         bundle.putString(FiveHundredSyncAdapter.CAT_KEY, s);
         bundle.putBoolean("isPer", true);
         albumsPresenter.addAlbum(FiveHundredSyncAdapter.ALBUM_NAME, GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_PX, s, null);
-        if (!FivePxSyncUtils.CreateSyncAccount(getActivity(), bundle)) {
-            FivePxSyncUtils.addPeriodicSync(bundle);
-            FivePxSyncUtils.TriggerRefresh(bundle);
+        if (!FivePxSyncUtils.getInstance().CreateSyncAccount(getActivity(), bundle)) {
+            FivePxSyncUtils.getInstance().addPeriodicSync(bundle);
+            FivePxSyncUtils.getInstance().TriggerRefresh(bundle);
         }
     }
 
@@ -378,7 +375,7 @@ public class AlbumsFragment extends BaseFragment implements
                 Bundle bundle = new Bundle();
                 bundle.putString(FiveHundredSyncAdapter.CAT_KEY, albumsPresenter.get500PxAlbum().getFivePxCategoryName());
                 bundle.putBoolean("isPer", true);
-                FivePxSyncUtils.TriggerRefresh(bundle);
+                FivePxSyncUtils.getInstance().TriggerRefresh(bundle);
             }
 
         }
@@ -396,7 +393,7 @@ public class AlbumsFragment extends BaseFragment implements
                 Bundle bundle = new Bundle();
                 bundle.putString("albumName", albumsPresenter.getTumblrAlbum().getTumblrBlogName());
                 bundle.putBoolean("isPer", true);
-                TumblrSyncUtils.TriggerRefresh(bundle);
+                TumblrSyncUtils.getInstance().TriggerRefresh(bundle);
             }
 
         }

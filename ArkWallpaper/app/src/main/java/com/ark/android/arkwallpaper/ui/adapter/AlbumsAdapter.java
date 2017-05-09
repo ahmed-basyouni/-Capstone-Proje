@@ -41,9 +41,9 @@ import com.ark.android.arkwallpaper.ui.activity.AlbumActivity;
 import com.ark.android.arkwallpaper.utils.WallPaperUtils;
 import com.ark.android.arkwallpaper.utils.uiutils.GlideContentProviderLoader;
 import com.ark.android.gallerylib.data.GallaryDataBaseContract;
-import com.ark.android.onlinesourcelib.FiveHundredSyncAdapter;
-import com.ark.android.onlinesourcelib.FivePxSyncUtils;
-import com.ark.android.onlinesourcelib.TumblrSyncUtils;
+import com.ark.android.onlinesourcelib.syncadapter.FiveHundredSyncAdapter;
+import com.ark.android.onlinesourcelib.syncUtils.FivePxSyncUtils;
+import com.ark.android.onlinesourcelib.syncUtils.TumblrSyncUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
@@ -238,8 +238,8 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
                 Bundle bundle = new Bundle();
                 bundle.putString(FiveHundredSyncAdapter.CAT_KEY, s);
                 bundle.putBoolean("isPer", true);
-                FivePxSyncUtils.updatePeriodicSync(albumObject.getFivePxCategoryName(), s);
-                FivePxSyncUtils.TriggerRefresh(bundle);
+                FivePxSyncUtils.getInstance().updatePeriodicSync(albumObject.getFivePxCategoryName(), s);
+                FivePxSyncUtils.getInstance().TriggerRefresh(bundle);
             }
         };
         iAlbumPresenter.showAdd500PxDialog(albumObject.getFivePxCategoryName(), action1);
@@ -261,8 +261,8 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
                     Bundle bundle = new Bundle();
                     bundle.putString("albumName", s);
                     bundle.putBoolean("isPer", true);
-                    TumblrSyncUtils.updatePeriodicSync(albumObject.getTumblrBlogName(), s);
-                    TumblrSyncUtils.TriggerRefresh(bundle);
+                    TumblrSyncUtils.getInstance().updatePeriodicSync(albumObject.getTumblrBlogName(), s);
+                    TumblrSyncUtils.getInstance().TriggerRefresh(bundle);
                 }else{
                     Toast.makeText(context, context.getString(R.string.blogNotFound), Toast.LENGTH_SHORT).show();
                 }
@@ -278,9 +278,9 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         if(albumObject.getType() == GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_TUMBLR)
-                            TumblrSyncUtils.removePeriodicSync(albumObject.getTumblrBlogName());
+                            TumblrSyncUtils.getInstance().removePeriodicSync(albumObject.getTumblrBlogName());
                         else if(albumObject.getType() == GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_PX)
-                            FivePxSyncUtils.removePeriodicSync(albumObject.getFivePxCategoryName());
+                            FivePxSyncUtils.getInstance().removePeriodicSync(albumObject.getFivePxCategoryName());
                         iAlbumPresenter.deleteAlbum(albumObject.getAlbumName());
                     }
                 })

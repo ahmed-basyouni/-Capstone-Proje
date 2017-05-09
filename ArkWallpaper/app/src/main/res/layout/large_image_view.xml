@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
+        android:contentDescription="@string/expandedImageView"
         android:transitionName="@string/expandedImageView"
         android:background="@color/expanded_image_bg"/>
 
@@ -62,7 +63,7 @@
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:drawableTop="@drawable/ic_delete_white_24dp"
-            android:text="@string/downloadFile"
+            android:text="@string/delete"
             android:padding="@dimen/smallPadding"
             android:visibility="gone"
             android:clickable="true"

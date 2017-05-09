@@ -1,8 +1,10 @@
-package com.ark.android.onlinesourcelib;
+package com.ark.android.onlinesourcelib.manager;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+
+import com.ark.android.onlinesourcelib.downloader.FiveHundredPxDownloader;
 
 /**
  * Created by ahmed-basyouni on 4/30/17.
@@ -25,7 +27,7 @@ public class FivePxManager {
     public void setOffset(Context context){
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         int currentOffset = sharedPreferences.getInt("FivePxOffset", 0);
-        sharedPreferences.edit().putInt("FivePxOffset", currentOffset+FiveHundredPxDownloader.DOWNLOAD_LIMIT).apply();
+        sharedPreferences.edit().putInt("FivePxOffset", currentOffset+ FiveHundredPxDownloader.DOWNLOAD_LIMIT).apply();
     }
 
     public void restOffset(Context context){

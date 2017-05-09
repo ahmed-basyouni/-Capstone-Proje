@@ -1,23 +1,12 @@
 package com.ark.android.arkwallpaper.data.manager;
 
 import android.content.ContentValues;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.Bundle;
-import android.provider.BaseColumns;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 
 import com.ark.android.arkwallpaper.WallpaperApp;
 import com.ark.android.arkwallpaper.data.model.AlbumObject;
 import com.ark.android.arkwallpaper.presenter.contract.AlbumFragmentContract;
 import com.ark.android.arkwallpaper.utils.WallPaperUtils;
 import com.ark.android.gallerylib.data.GallaryDataBaseContract;
-import com.ark.android.onlinesourcelib.FiveHundredSyncAdapter;
-import com.ark.android.onlinesourcelib.FivePxSyncUtils;
-import com.ark.android.onlinesourcelib.TumblrSyncAdapter;
-import com.ark.android.onlinesourcelib.TumblrSyncUtils;
 
 import java.util.List;
 

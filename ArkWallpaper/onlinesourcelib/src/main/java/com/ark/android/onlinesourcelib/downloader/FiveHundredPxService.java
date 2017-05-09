@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ark.android.onlinesourcelib;
+package com.ark.android.onlinesourcelib.downloader;
 
 import java.util.List;
 

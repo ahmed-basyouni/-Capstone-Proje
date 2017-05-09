@@ -14,6 +14,8 @@ import com.ark.android.arkwallpaper.WallpaperApp;
 import com.ark.android.arkwallpaper.WallpaperObserverService;
 import com.ark.android.gallerylib.data.GallaryDataBaseContract;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import static com.ark.android.arkwallpaper.Constants.*;
@@ -152,6 +154,8 @@ public class WallPaperUtils {
 
     public static void changeAlbumBroadCast(String albumName){
         Intent intent = new Intent(CHANGE_CURRENT_ALBUM_ACTION);
+        if(!isRandomOrder())
+            setCurrentPicIndex(0);
         setCurrentAlbum(albumName);
         WallpaperApp.getWallpaperApp().sendBroadcast(intent);
     }

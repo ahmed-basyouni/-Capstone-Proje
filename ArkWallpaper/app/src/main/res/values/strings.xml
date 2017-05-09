@@ -65,6 +65,10 @@
     <string name="settings">Settings</string>
     <string name="changeDisplayMode">Change Display Mode</string>
     <string name="fill">Fill</string>
+    <string name="refreshWallpaper">Refresh Wallpaper</string>
+    <string name="NextWallpaper">Next Wallpaper</string>
+    <string name="nextAlbum">Next Album</string>
+    <string name="switchToAlbum">Switch album:</string>
 
     <string-array name="fivePx_Cat">
         <item>All</item>

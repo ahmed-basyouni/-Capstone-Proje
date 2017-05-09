@@ -1,12 +1,14 @@
-package com.ark.android.onlinesourcelib;
+package com.ark.android.onlinesourcelib.manager;
 
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.ark.android.onlinesourcelib.downloader.TumblrBlogVerifier;
+import com.ark.android.onlinesourcelib.downloader.TumblrDownloader;
+
 import java.io.IOException;
-import java.net.URLConnection;
 
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
@@ -18,7 +20,6 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Observer;
-import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
@@ -102,7 +103,7 @@ public class TumblrManager {
     public void setOffset(Context context){
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         int currentOffset = sharedPreferences.getInt("tumblrOffset", 0);
-        sharedPreferences.edit().putInt("tumblrOffset", currentOffset+TumblrDownloader.DOWNLOAD_LIMIT).apply();
+        sharedPreferences.edit().putInt("tumblrOffset", currentOffset+ TumblrDownloader.DOWNLOAD_LIMIT).apply();
     }
 
     public void restOffset(Context context){

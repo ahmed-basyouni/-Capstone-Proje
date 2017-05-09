@@ -13,9 +13,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
+import com.ark.android.arkwallpaper.ArkWallpaperService;
 import com.ark.android.arkwallpaper.R;
 import com.ark.android.arkwallpaper.WallpaperObserverService;
-import com.ark.android.arkwallpaper.WallpaperSlideshow;
 import com.ark.android.arkwallpaper.presenter.contract.HomeContract;
 import com.ark.android.arkwallpaper.presenter.presenterImp.HomePresenter;
 import com.ark.android.arkwallpaper.ui.BaseActivity;
@@ -53,7 +53,6 @@ public class HomeActivity extends BaseActivity implements HomeContract.IHomeView
 
     public static final String FROM_SPLASH = "fromsplashScreen";
 
-    private HomePagerAdapter homePagerAdapter;
     private int REQUEST_SET_LIVE_WALLPAPER = 543;
     private Spring warningSpring;
 
@@ -132,7 +131,7 @@ public class HomeActivity extends BaseActivity implements HomeContract.IHomeView
         fragments.add(new ChangeFragment());
         fragments.add(new AlbumsFragment());
         fragments.add(new SettingsFragment());
-        homePagerAdapter = new HomePagerAdapter(getSupportFragmentManager(), fragments);
+        HomePagerAdapter homePagerAdapter = new HomePagerAdapter(getSupportFragmentManager(), fragments);
         viewPager.setAdapter(homePagerAdapter);
     }
 
@@ -141,7 +140,7 @@ public class HomeActivity extends BaseActivity implements HomeContract.IHomeView
         Intent intent = new Intent();
         intent.setAction(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER);
         String pkg = getPackageName();
-        String cls = WallpaperSlideshow.class.getCanonicalName();
+        String cls = ArkWallpaperService.class.getCanonicalName();
         intent.putExtra(
                 WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT,
                 new ComponentName(pkg, cls));

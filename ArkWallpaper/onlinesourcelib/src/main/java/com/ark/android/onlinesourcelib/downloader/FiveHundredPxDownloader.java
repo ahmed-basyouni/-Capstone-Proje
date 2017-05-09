@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-package com.ark.android.onlinesourcelib;
-
-import android.content.Intent;
-import android.net.Uri;
-import android.text.TextUtils;
-import android.util.Log;
+package com.ark.android.onlinesourcelib.downloader;
 
 import com.ark.android.arkanalytics.GATrackerManager;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Random;
 
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;

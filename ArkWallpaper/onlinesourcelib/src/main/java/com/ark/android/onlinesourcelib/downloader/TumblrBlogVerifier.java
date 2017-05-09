@@ -1,4 +1,4 @@
-package com.ark.android.onlinesourcelib;
+package com.ark.android.onlinesourcelib.downloader;
 
 import java.util.List;
 
@@ -16,11 +16,11 @@ public interface TumblrBlogVerifier {
     Observable<BlogInfo> checkBlogInfo();
 
     public class BlogInfo {
-        Meta meta;
+        public Meta meta;
     }
 
     class Meta{
-        int status;
+        public int status;
         String msg;
     }
 }

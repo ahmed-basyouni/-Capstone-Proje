@@ -11,7 +11,7 @@
     <application android:allowBackup="true" android:label="@string/app_name"
         android:supportsRtl="true">
 
-        <service android:name=".FivePxSyncService">
+        <service android:name=".syncadapter.FivePxSyncService">
             <!-- This intent filter is required. It allows the system to launch our sync service
             as needed. -->
             <intent-filter>
@@ -27,7 +27,7 @@
         feed), this account's implementation is largely empty.
         It's also possible to attach a SyncAdapter to an existing account provided by another
         package. In that case, this element could be omitted here. -->
-        <service android:name=".FivePxGenericAccountService">
+        <service android:name=".Account.FivePxGenericAccountService">
             <!-- Required filter used by the system to launch our account service. -->
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
@@ -38,7 +38,7 @@
         </service>
 
 
-        <service android:name=".TumblrSyncService">
+        <service android:name=".syncadapter.TumblrSyncService">
             <!-- This intent filter is required. It allows the system to launch our sync service
             as needed. -->
             <intent-filter>
@@ -50,7 +50,7 @@
         </service>
 
 
-        <service android:name=".TumblrGenericAccountService">
+        <service android:name=".Account.TumblrGenericAccountService">
             <!-- Required filter used by the system to launch our account service. -->
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />

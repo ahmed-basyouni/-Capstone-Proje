@@ -1,30 +1,19 @@
-package com.ark.android.onlinesourcelib;
-
-/**
- * Created by ahmed-basyouni on 4/25/17.
- */
+package com.ark.android.onlinesourcelib.syncadapter;
 
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 
-/** Service to handle sync requests.
- *
- * <p>This service is invoked in response to Intents with action android.content.SyncAdapter, and
- * returns a Binder connection to SyncAdapter.
- *
- * <p>For performance, only one sync adapter will be initialized within this application's context.
- *
- * <p>Note: The SyncService itself is not notified when a new sync occurs. It's role is to
- * manage the lifecycle of our {@link } and provide a handle to said SyncAdapter to the
- * OS on request.
+/**
+ * Created by ahmed-basyouni on 4/25/17.
  */
-public class FivePxSyncService extends Service {
+
+public class TumblrSyncService extends Service {
     private static final String TAG = "SyncService";
 
     private static final Object sSyncAdapterLock = new Object();
-    private static FiveHundredSyncAdapter sSyncAdapter = null;
+    private static TumblrSyncAdapter sSyncAdapter = null;
 
     /**
      * Thread-safe constructor, creates static {@link } instance.
@@ -35,7 +24,7 @@ public class FivePxSyncService extends Service {
         Log.i(TAG, "Service created");
         synchronized (sSyncAdapterLock) {
             if (sSyncAdapter == null) {
-                sSyncAdapter = new FiveHundredSyncAdapter(getApplicationContext(), true);
+                sSyncAdapter = new TumblrSyncAdapter(getApplicationContext(), true);
             }
         }
     }
