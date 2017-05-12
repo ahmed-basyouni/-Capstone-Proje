@@ -33,7 +33,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class FiveHundredPxDownloader {
 
-    public static final int DOWNLOAD_LIMIT = 2;
+    public static final int DOWNLOAD_LIMIT = 5;
 
     public static List<FiveHundredPxService.Photo> get500PXPhotos(final String cat, final int pageNumber){
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();

@@ -15,5 +15,7 @@
     <color name="floatingFolderColor">#E040FB</color>
     <color name="floatingImageColor">#009688</color>
     <color name="lightGrey">#DCDCDC</color>
+    <color name="tumblr_color">#566c87</color>
+    <color name="five_color">#1e88e5</color>
 
 </resources>

@@ -55,11 +55,10 @@ import butterknife.ButterKnife;
 import rx.functions.Action1;
 
 /**
- *
  * Created by ahmed-basyouni on 4/23/17.
  */
 
-public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsViewHolder>{
+public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsViewHolder> {
 
     private final Activity context;
     private final List<AlbumObject> albums;
@@ -67,7 +66,7 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
     private final int width;
     private final AlbumFragmentContract.IAlbumsPresenter iAlbumPresenter;
 
-    public AlbumsAdapter(List<AlbumObject> albums, Activity activity, AlbumFragmentContract.IAlbumsPresenter iAlbumsPresenter){
+    public AlbumsAdapter(List<AlbumObject> albums, Activity activity, AlbumFragmentContract.IAlbumsPresenter iAlbumsPresenter) {
         this.context = activity;
         this.albums = albums;
         DisplayMetrics metrics = new DisplayMetrics();
@@ -88,11 +87,11 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
 
         final AlbumObject albumObject = albums.get(position);
 
-        if((albumObject.getType() == GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_PX || albumObject.getType() == GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_TUMBLR)
-                && albumObject.getAlbumImage().toString().equalsIgnoreCase("")){
+        if ((albumObject.getType() == GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_PX || albumObject.getType() == GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_TUMBLR)
+                && albumObject.getAlbumImage().toString().equalsIgnoreCase("")) {
             holder.syncText.setVisibility(View.VISIBLE);
             holder.albumImage.setVisibility(View.INVISIBLE);
-        }else{
+        } else {
             holder.syncText.setVisibility(View.GONE);
             holder.albumImage.setVisibility(View.VISIBLE);
         }
@@ -107,13 +106,10 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
 
         RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) holder.viewsHolder.getLayoutParams();
 
-        if(context.getResources().getBoolean(R.bool.isTab) && context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
-            params.width = (width / 2) - 25;
-            params.height = height / 3;
-        }else{
-            params.height = this.height / 3;
-            params.width = RecyclerView.LayoutParams.MATCH_PARENT;
-        }
+
+        params.height = this.height / 3;
+        params.width = RecyclerView.LayoutParams.MATCH_PARENT;
+
 
         holder.viewsHolder.setLayoutParams(params);
 
@@ -129,11 +125,11 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
         holder.editAlbum.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(albumObject.getType() == GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_GALLERY)
+                if (albumObject.getType() == GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_GALLERY)
                     showEditAlbumDialog(albumObject.getAlbumName());
-                else if(albumObject.getType() == GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_TUMBLR){
+                else if (albumObject.getType() == GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_TUMBLR) {
                     editTumblrAlbum(albumObject);
-                }else{
+                } else {
                     editFivePxAlbum(albumObject);
                 }
             }
@@ -158,15 +154,15 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
         Glide.with(context)
                 .using(new GlideContentProviderLoader(context))
                 .load(albumObject.getAlbumImage().toString().equalsIgnoreCase("") ?
-                        Uri.parse("android.resource://"+ WallpaperApp.getWallpaperApp().getPackageName() +"/drawable/bg3")
+                        Uri.parse("android.resource://" + WallpaperApp.getWallpaperApp().getPackageName() + "/drawable/placeholder")
                         : albumObject.getAlbumImage())
                 .asBitmap()
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .into(holder.albumImage);
 
-        if(!albumObject.isEnabled()){
+        if (!albumObject.isEnabled()) {
             holder.viewsHolder.setAlpha(0.6f);
-        }else{
+        } else {
             holder.viewsHolder.setAlpha(1f);
         }
 
@@ -180,9 +176,9 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
 
             @Override
             public boolean onSingleTapUp(MotionEvent e) {
-                if(holder.selectedView.getVisibility() == View.GONE){
-                    Intent i = new Intent(context,  AlbumActivity.class);
-                    i.putExtra("albumName" , albumObject.getAlbumName());
+                if (holder.selectedView.getVisibility() == View.GONE) {
+                    Intent i = new Intent(context, AlbumActivity.class);
+                    i.putExtra("albumName", albumObject.getAlbumName());
                     i.putExtra("tumblrBlog", albumObject.getTumblrBlogName());
                     i.putExtra("fivePxCat", albumObject.getFivePxCategoryName());
                     i.putExtra("type", albumObject.getType());
@@ -203,7 +199,7 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
 
             @Override
             public void onLongPress(MotionEvent e) {
-                if(holder.selectedView.getVisibility() == View.GONE && holder.syncText.getVisibility() == View.GONE) {
+                if (holder.selectedView.getVisibility() == View.GONE && holder.syncText.getVisibility() == View.GONE) {
                     super.onLongPress(e);
                     int x = (int) e.getX();
                     int y = (int) e.getY();
@@ -214,7 +210,7 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
                     Animator anim = ViewAnimationUtils.createCircularReveal(holder.selectedView, x, y, startRadius, endRadius);
 
                     holder.selectedView.setVisibility(View.VISIBLE);
-                    if(WallPaperUtils.getCurrentAlbum() != null && WallPaperUtils.getCurrentAlbum().equals(albumObject.getAlbumName()))
+                    if (WallPaperUtils.getCurrentAlbum() != null && WallPaperUtils.getCurrentAlbum().equals(albumObject.getAlbumName()))
                         holder.playAlbum.setVisibility(View.GONE);
                     else
                         holder.playAlbum.setVisibility(View.VISIBLE);
@@ -236,13 +232,13 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
             @Override
             public void call(String s) {
                 context.getContentResolver().delete(GallaryDataBaseContract.GalleryTable.CONTENT_URI
-                        , GallaryDataBaseContract.GalleryTable.COLUMN_ALBUM_NAME + " = ?" , new String[]{albumObject.getAlbumName()});
+                        , GallaryDataBaseContract.GalleryTable.COLUMN_ALBUM_NAME + " = ?", new String[]{albumObject.getAlbumName()});
                 ContentValues contentValues = new ContentValues();
                 contentValues.put(GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_Five_PX_CATEGORY, s);
                 contentValues.put(GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_IMAGE_URI, "");
                 contentValues.put(GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_COUNT, 0);
                 WallpaperApp.getWallpaperApp().getContentResolver().update(GallaryDataBaseContract.AlbumsTable.CONTENT_URI, contentValues
-                        , GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_NAME + " = ?" , new String[]{albumObject.getAlbumName()});
+                        , GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_NAME + " = ?", new String[]{albumObject.getAlbumName()});
                 Bundle bundle = new Bundle();
                 bundle.putString(FiveHundredSyncAdapter.CAT_KEY, s);
                 bundle.putBoolean("isPer", true);
@@ -257,21 +253,21 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
         Action1<String> action = new Action1<String>() {
             @Override
             public void call(String s) {
-                if(s != null){
+                if (s != null) {
                     context.getContentResolver().delete(GallaryDataBaseContract.GalleryTable.CONTENT_URI
-                            , GallaryDataBaseContract.GalleryTable.COLUMN_ALBUM_NAME + " = ?" , new String[]{albumObject.getAlbumName()});
+                            , GallaryDataBaseContract.GalleryTable.COLUMN_ALBUM_NAME + " = ?", new String[]{albumObject.getAlbumName()});
                     ContentValues contentValues = new ContentValues();
                     contentValues.put(GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_TUMBLR_BLOG_NAME, s);
                     contentValues.put(GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_IMAGE_URI, "");
                     contentValues.put(GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_COUNT, 0);
                     WallpaperApp.getWallpaperApp().getContentResolver().update(GallaryDataBaseContract.AlbumsTable.CONTENT_URI, contentValues
-                            , GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_NAME + " = ?" , new String[]{albumObject.getAlbumName()});
+                            , GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_NAME + " = ?", new String[]{albumObject.getAlbumName()});
                     Bundle bundle = new Bundle();
                     bundle.putString("albumName", s);
                     bundle.putBoolean("isPer", true);
                     TumblrSyncUtils.getInstance().updatePeriodicSync(albumObject.getTumblrBlogName(), s);
                     TumblrSyncUtils.getInstance().TriggerRefresh(bundle);
-                }else{
+                } else {
                     Toast.makeText(context, context.getString(R.string.blogNotFound), Toast.LENGTH_SHORT).show();
                 }
             }
@@ -285,9 +281,9 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
                 .setMessage(context.getString(R.string.album_delete_confirmation))
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        if(albumObject.getType() == GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_TUMBLR)
+                        if (albumObject.getType() == GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_TUMBLR)
                             TumblrSyncUtils.getInstance().removePeriodicSync(albumObject.getTumblrBlogName());
-                        else if(albumObject.getType() == GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_PX)
+                        else if (albumObject.getType() == GallaryDataBaseContract.AlbumsTable.ALBUM_TYPE_PX)
                             FivePxSyncUtils.getInstance().removePeriodicSync(albumObject.getFivePxCategoryName());
                         iAlbumPresenter.deleteAlbum(albumObject.getAlbumName());
                     }
@@ -305,7 +301,7 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.add_album_dialog);
 
-        ((TextView)dialog.findViewById(R.id.dialogTitle)).setText(context.getString(R.string.rename));
+        ((TextView) dialog.findViewById(R.id.dialogTitle)).setText(context.getString(R.string.rename));
         final EditText albumNameField = (EditText) dialog.findViewById(R.id.albumNameField);
         albumNameField.setText(oldName);
         Button okButton = (Button) dialog.findViewById(R.id.addAlbum);
@@ -313,10 +309,10 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!albumNameField.getText().toString().isEmpty()){
+                if (!albumNameField.getText().toString().isEmpty()) {
                     iAlbumPresenter.editAlbumName(oldName, albumNameField.getText().toString());
                     dialog.dismiss();
-                }else{
+                } else {
                     Toast.makeText(context, context.getString(R.string.no_name_provided), Toast.LENGTH_SHORT).show();
                 }
             }
@@ -336,23 +332,34 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
         return albums.size();
     }
 
-    static class AlbumsViewHolder extends RecyclerView.ViewHolder{
+    static class AlbumsViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.albumName) TextView albumName;
-        @BindView(R.id.albumEnabled) CheckBox albumEnabled;
-        @BindView(R.id.albumImage) ImageView albumImage;
-        @BindView(R.id.viewsHolder) CardView viewsHolder;
-        @BindView(R.id.selectedView) LinearLayout selectedView;
-        @BindView(R.id.editAlbum) TextView editAlbum;
-        @BindView(R.id.deleteAlbum) TextView deleteAlbum;
-        @BindView(R.id.hideSelectedView) TextView hideSelectedView;
-        @BindView(R.id.albumCount) TextView albumCount;
-        @BindView(R.id.syncText) TextView syncText;
-        @BindView(R.id.playAlbum) TextView playAlbum;
+        @BindView(R.id.albumName)
+        TextView albumName;
+        @BindView(R.id.albumEnabled)
+        CheckBox albumEnabled;
+        @BindView(R.id.albumImage)
+        ImageView albumImage;
+        @BindView(R.id.viewsHolder)
+        CardView viewsHolder;
+        @BindView(R.id.selectedView)
+        LinearLayout selectedView;
+        @BindView(R.id.editAlbum)
+        TextView editAlbum;
+        @BindView(R.id.deleteAlbum)
+        TextView deleteAlbum;
+        @BindView(R.id.hideSelectedView)
+        TextView hideSelectedView;
+        @BindView(R.id.albumCount)
+        TextView albumCount;
+        @BindView(R.id.syncText)
+        TextView syncText;
+        @BindView(R.id.playAlbum)
+        TextView playAlbum;
 
         AlbumsViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this,itemView);
+            ButterKnife.bind(this, itemView);
         }
     }
 }

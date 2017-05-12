@@ -22,24 +22,28 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/nextWallpaper"
                 android:checked="true"
+                android:contentDescription="@string/NextWallpaper"
                 android:text="@string/NextWallpaper"/>
 
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/nextAlbum"
+                android:contentDescription="@string/nextAlbum"
                 android:text="@string/nextAlbum"/>
 
             <RadioButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/switchToAlbum"
+                android:contentDescription="@string/switchToAlbum"
                 android:text="@string/switchToAlbum"/>
 
             <Spinner
                 android:layout_margin="@dimen/cardView_margin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:contentDescription="@string/albumName"
                 android:id="@+id/albumSpinner"/>
 
         </RadioGroup>
@@ -48,6 +52,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@android:string/ok"
+            android:contentDescription="@string/saveButton"
             android:layout_gravity="center_horizontal"
             android:id="@+id/save"/>
 

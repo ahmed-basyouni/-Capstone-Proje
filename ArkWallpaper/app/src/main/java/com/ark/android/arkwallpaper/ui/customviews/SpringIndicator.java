@@ -20,6 +20,12 @@ import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.Typeface;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
@@ -65,12 +71,13 @@ public class SpringIndicator extends FrameLayout {
     private ViewPager viewPager;
 
     private List<ImageButton> tabs;
-    private TypedArray tabsDrawable;
+    private List<Integer> tabsDrawable;
 
     private ViewPager.OnPageChangeListener delegateListener;
     private TabClickListener tabClickListener;
     private ObjectAnimator indicatorColorAnim;
     private View currentView;
+    private List<String> buttonsDesc;
 
     public SpringIndicator(Context context) {
         this(context, null);
@@ -81,7 +88,7 @@ public class SpringIndicator extends FrameLayout {
         initAttrs(attrs);
     }
 
-    public void setTabsDrawable(TypedArray tabsDrawable) {
+    public void setTabsDrawable(List<Integer> tabsDrawable) {
         this.tabsDrawable = tabsDrawable;
     }
 
@@ -130,6 +137,15 @@ public class SpringIndicator extends FrameLayout {
         addView(springView);
     }
 
+    public static Bitmap tintImage(Bitmap bitmap, int color) {
+        Paint paint = new Paint();
+        paint.setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN));
+        Bitmap bitmapResult = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmapResult);
+        canvas.drawBitmap(bitmap, 0, 0, paint);
+        return bitmapResult;
+    }
+
     private void addTabContainerView() {
         tabContainer = new LinearLayout(getContext());
         tabContainer.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 1.0f));
@@ -143,9 +159,11 @@ public class SpringIndicator extends FrameLayout {
         tabs = new ArrayList<>();
         for (int i = 0; i < viewPager.getAdapter().getCount(); i++) {
             ImageButton imageButton = new ImageButton(getContext());
-            imageButton.setImageResource(tabsDrawable.getResourceId(i,0));
             imageButton.setBackgroundColor(getResources().getColor(android.R.color.transparent));
             imageButton.setLayoutParams(layoutParams);
+            imageButton.setTag(i);
+            if(buttonsDesc != null)
+                imageButton.setContentDescription(buttonsDesc.get(i));
             final int position = i;
             imageButton.setOnClickListener(new OnClickListener() {
                 @Override
@@ -273,10 +291,12 @@ public class SpringIndicator extends FrameLayout {
     }
 
     private void setSelectedTextColor(int position) {
-        for (ImageButton tab : tabs) {
-            tab.setSelected(false);
+        for(int x=0; x < tabs.size(); x++){
+            if(x != position)
+                ((ImageButton)tabs.get(x).findViewWithTag(x)).setImageResource(tabsDrawable.get(x));
         }
-        tabs.get(position).setSelected(true);
+        ((ImageButton)tabs.get(position).findViewWithTag(position)).setImageBitmap(tintImage(BitmapFactory.decodeResource(getResources()
+                , tabsDrawable.get(position)) , getResources().getColor(R.color.colorPrimary)));
     }
 
     private void createIndicatorColorAnim() {
@@ -302,5 +322,10 @@ public class SpringIndicator extends FrameLayout {
 
     public void setOnTabClickListener(TabClickListener listener) {
         this.tabClickListener = listener;
+    }
+
+
+    public void setButtonsDesc(List<String> buttonsDesc) {
+        this.buttonsDesc = buttonsDesc;
     }
 }

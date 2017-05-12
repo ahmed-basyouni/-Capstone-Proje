@@ -2,15 +2,18 @@ package com.ark.android.arkwallpaper.ui.activity;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.graphics.Palette;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import com.ark.android.arkanalytics.GATrackerManager;
 import com.ark.android.arkwallpaper.R;
@@ -42,6 +45,14 @@ public class CustomizeWallpaperActivity extends AppCompatActivity implements Vie
     SeekBar dimValue;
     @BindView(R.id.greyValue)
     SeekBar greyScaleValue;
+    @BindView(R.id.blurringTitle)
+    TextView blurringTitle;
+    @BindView(R.id.dimTitle)
+    TextView dimTitle;
+    @BindView(R.id.greyTitle)
+    TextView greyTitle;
+    @BindView(R.id.customizeSectionTitle)
+    TextView customizeSectionTitle;
     private Bitmap customizedBitmap;
 
     @Override
@@ -67,11 +78,32 @@ public class CustomizeWallpaperActivity extends AppCompatActivity implements Vie
                     public void onResourceReady(Bitmap resource, GlideAnimation glideAnimation) {
                         customizedBitmap = resource;
                         expandedImageView.setImageBitmap(resource);
+                        setseekerBarColors(resource);
                         setSeekBarsValue();
                     }
                 });
 
         setSeekBarsListener();
+    }
+
+    private void setseekerBarColors(Bitmap resource) {
+        Palette p = Palette.from(resource).generate();
+        if(p.getVibrantSwatch() != null) {
+
+            blurringValue.getProgressDrawable().setColorFilter(p.getVibrantSwatch().getTitleTextColor(), PorterDuff.Mode.MULTIPLY);
+            blurringValue.getThumb().setColorFilter(p.getVibrantSwatch().getTitleTextColor(), PorterDuff.Mode.MULTIPLY);
+
+            dimValue.getProgressDrawable().setColorFilter(p.getVibrantSwatch().getTitleTextColor(), PorterDuff.Mode.MULTIPLY);
+            dimValue.getThumb().setColorFilter(p.getVibrantSwatch().getTitleTextColor(), PorterDuff.Mode.MULTIPLY);
+
+            greyScaleValue.getProgressDrawable().setColorFilter(p.getVibrantSwatch().getTitleTextColor(), PorterDuff.Mode.MULTIPLY);
+            greyScaleValue.getThumb().setColorFilter(p.getVibrantSwatch().getTitleTextColor(), PorterDuff.Mode.MULTIPLY);
+
+            blurringTitle.setTextColor(p.getVibrantSwatch().getTitleTextColor());
+            dimTitle.setTextColor(p.getVibrantSwatch().getTitleTextColor());
+            greyTitle.setTextColor(p.getVibrantSwatch().getTitleTextColor());
+            customizeSectionTitle.setTextColor(p.getVibrantSwatch().getTitleTextColor());
+        }
     }
 
     private void setSeekBarsValue() {

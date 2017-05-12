@@ -12,6 +12,8 @@ import com.ark.android.arkwallpaper.WallpaperApp;
 import com.ark.android.arkwallpaper.utils.WallPaperUtils;
 import com.ark.android.arkwallpaper.utils.WidgetUtils;
 
+import static android.appwidget.AppWidgetManager.EXTRA_APPWIDGET_ID;
+
 
 /**
  *
@@ -26,19 +28,23 @@ public class WallpaperWidget extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         super.onUpdate(context, appWidgetManager, appWidgetIds);
-        Intent intent = new Intent("com.ark.android.arkwallpaper.widgetAction");
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra(PREFERENCE_NAME, "Pref" + appWidgetIds[0]);
-        WallpaperApp.getWallpaperApp().startActivity(intent);
-        // Get all ids
-        context.startService(new Intent(context,WidgetService.class));
+        if (appWidgetIds != null) {
+            int N = appWidgetIds.length;
+
+            for (int mAppWidgetId : appWidgetIds) {
+
+                Intent intent = new Intent(context, WidgetService.class);
+
+                intent.putExtra(EXTRA_APPWIDGET_ID, mAppWidgetId);
+                context.startService(intent);
+            }
+        }
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
         final String action = intent.getAction();
-        int widgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, -1);
+        int widgetId = intent.getIntExtra(EXTRA_APPWIDGET_ID, -1);
         String prefName =  "Pref" + widgetId;
         if(action.equals(ACTION_CLICK)){
             Constants.CHANGE_MODE change_mode = Constants.CHANGE_MODE.values()[WidgetUtils.getChangeMode(prefName)];

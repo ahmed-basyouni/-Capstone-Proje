@@ -35,6 +35,7 @@
     <string name="imageSaved">Image Saved</string>
     <string name="ArkWallpaperIsNotActive">Set the app as your live wallpaper in order to use it. Click here to do so</string>
     <string name="lastWallpaper">last Chosen image</string>
+    <string name="lastWallpaperExpanded">last Chosen image expanded</string>
     <string name="changeEvery">Change wallpaper every</string>
     <string name="defaultChangeValue">30</string>
     <string name="changeWithUnlock">Change wallpaper on unlock screen</string>
@@ -69,6 +70,27 @@
     <string name="NextWallpaper">Next Wallpaper</string>
     <string name="nextAlbum">Next Album</string>
     <string name="switchToAlbum">Switch album:</string>
+    <string name="albumCover">Album Cover Image</string>
+    <string name="albumSingleImage">Album single image</string>
+    <string name="lastWallpaperCustomize">Last chosen image customization</string>
+    <string name="enterAlbumName">Enter album name</string>
+    <string name="changeInterval">Enter change interval</string>
+    <string name="openAddAlbumMenu">open add album menu</string>
+    <string name="addImages">Add images</string>
+    <string name="addFolder">Add image folder</string>
+    <string name="imagesList">images list</string>
+    <string name="refreshAlbum">refresh album</string>
+    <string name="saveButton">save button</string>
+    <string name="categoryDropDownn">category Drop Down</string>
+    <string name="albumEnabled">album enabled checkbox</string>
+    <string name="albumCountDesc">album count</string>
+    <string name="chooseAlbum">choose this album</string>
+    <string name="albumsList">albums list</string>
+    <string name="changeBlurring">change blurring value</string>
+    <string name="changeDimValue">change dim value</string>
+    <string name="changeGreyValue">change grey scale value</string>
+    <string name="makeItMine">Make it mine</string>
+    <string name="makeItMineDesc">Customize app colors and apperance</string>
 
     <string-array name="fivePx_Cat">
         <item>All</item>

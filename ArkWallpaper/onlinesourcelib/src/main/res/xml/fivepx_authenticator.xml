@@ -14,7 +14,7 @@ limitations under the License.
 
 <account-authenticator xmlns:android="http://schemas.android.com/apk/res/android"
     android:accountType="com.ark.android.arkwallpaperfivehundred.account"
-    android:icon="@drawable/ic_launcher"
-    android:smallIcon="@drawable/ic_launcher"
+    android:icon="@mipmap/ic_launcher_five"
+    android:smallIcon="@mipmap/ic_launcher_five"
     android:label="@string/five_auth_name"
     />

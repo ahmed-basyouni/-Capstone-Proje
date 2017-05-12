@@ -10,6 +10,7 @@
     <ImageView
         android:id="@+id/albumImage"
         android:layout_width="match_parent"
+        android:contentDescription="@string/albumCover"
         android:layout_height="match_parent"
         android:scaleType="centerCrop" />
 
@@ -23,6 +24,7 @@
 
         <CheckBox
             android:id="@+id/albumEnabled"
+            android:contentDescription="@string/albumEnabled"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:buttonTint="@color/colorAccent"
@@ -33,6 +35,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="@dimen/smallPadding"
+            android:contentDescription="@string/albumName"
             android:textColor="@color/text_secondary" />
 
         <TextView
@@ -40,6 +43,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="@dimen/smallPadding"
+            android:contentDescription="@string/albumCountDesc"
             android:text="@string/albumCount"
             android:textColor="@color/text_secondary" />
 
@@ -61,6 +65,7 @@
             android:layout_height="wrap_content"
             android:drawablePadding="@dimen/smallPadding"
             android:layout_margin="@dimen/cardView_margin"
+            android:contentDescription="@string/chooseAlbum"
             android:drawableTop="@drawable/ic_play_arrow_white_24dp"
             android:gravity="center"
             android:text="@string/select"
@@ -79,6 +84,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:contentDescription="@string/edit"
                 android:drawablePadding="@dimen/smallPadding"
                 android:drawableTop="@drawable/ic_edit_white_24dp"
                 android:gravity="center"
@@ -93,6 +99,7 @@
                 android:drawablePadding="@dimen/smallPadding"
                 android:drawableTop="@drawable/ic_delete_forever_white_24dp"
                 android:gravity="center"
+                android:contentDescription="@string/delete"
                 android:text="@string/delete"
                 android:textColor="@android:color/white" />
 
@@ -104,6 +111,7 @@
                 android:drawablePadding="@dimen/smallPadding"
                 android:drawableTop="@drawable/ic_close_white_24dp"
                 android:gravity="center"
+                android:contentDescription="@android:string/cancel"
                 android:text="@android:string/cancel"
                 android:textColor="@android:color/white" />
 

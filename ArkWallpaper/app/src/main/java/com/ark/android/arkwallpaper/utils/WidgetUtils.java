@@ -48,7 +48,7 @@ public class WidgetUtils {
         Cursor cursor = WallpaperApp.getWallpaperApp().getContentResolver()
                 .query(GallaryDataBaseContract.AlbumsTable.CONTENT_URI,
                         new String[]{GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_NAME},
-                        null, null, null);
+                        GallaryDataBaseContract.AlbumsTable.COLUMN_ALBUM_ENABLED +" = ? ", new String[]{"1"}, null);
 
         if(cursor != null && cursor.getCount() > 1){
             int index = getCurrentAlbumIndex();

@@ -75,6 +75,7 @@
                     android:layout_marginStart="@dimen/large_margin"
                     android:inputType="number"
                     android:text="@string/defaultChangeValue"
+                    android:contentDescription="@string/changeInterval"
                     android:textColor="@color/text_secondary"
                     tools:text="30" />
 

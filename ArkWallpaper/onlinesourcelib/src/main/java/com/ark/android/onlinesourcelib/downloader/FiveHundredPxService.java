@@ -22,7 +22,7 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 
 public interface FiveHundredPxService {
-    @GET("v1/photos?&image_size=6&rpp=2")
+    @GET("v1/photos?&image_size=6&rpp=5")
     Call<PhotosResponse> get500xPhotos();
 
     class PhotosResponse {

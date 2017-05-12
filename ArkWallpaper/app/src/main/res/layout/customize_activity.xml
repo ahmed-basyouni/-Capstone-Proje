@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:visibility="gone"
         android:scaleType="centerCrop"
-        android:contentDescription="@string/lastWallpaper"
+        android:contentDescription="@string/lastWallpaperCustomize"
         android:transitionName="@string/expandedImageView"
         android:background="@color/expanded_image_bg"/>
 
@@ -30,6 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="@dimen/smallPadding"
+            android:id="@+id/customizeSectionTitle"
             android:clickable="false"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/white"
@@ -40,6 +41,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="Blur"
+            android:id="@+id/blurringTitle"
             android:text="@string/Blur"
             android:padding="@dimen/smallPadding"
             android:textColor="@android:color/white"/>
@@ -51,6 +53,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginStart="@dimen/cardView_margin"
             android:max="25"
+            android:contentDescription="@string/changeBlurring"
             android:layout_marginEnd="@dimen/cardView_margin"
             android:padding="@dimen/smallPadding"
             android:progressTint="@android:color/white"
@@ -60,6 +63,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="Dim"
+            android:id="@+id/dimTitle"
             android:text="@string/Dim"
             android:padding="@dimen/smallPadding"
             android:textColor="@android:color/white"/>
@@ -72,6 +76,7 @@
             android:layout_marginStart="@dimen/cardView_margin"
             android:layout_marginEnd="@dimen/cardView_margin"
             android:padding="@dimen/smallPadding"
+            android:contentDescription="@string/changeDimValue"
             android:max="30"
             android:progressTint="@android:color/white"
             android:thumbTint="@android:color/white"/>
@@ -81,6 +86,7 @@
             android:layout_height="wrap_content"
             tools:text="Greyscale"
             android:text="@string/Greyscale"
+            android:id="@+id/greyTitle"
             android:padding="@dimen/smallPadding"
             android:textColor="@android:color/white"/>
 
@@ -92,6 +98,7 @@
             android:layout_marginStart="@dimen/cardView_margin"
             android:layout_marginEnd="@dimen/cardView_margin"
             android:padding="@dimen/smallPadding"
+            android:contentDescription="@string/changeGreyValue"
             android:progressTint="@android:color/white"
             android:thumbTint="@android:color/white"/>
 

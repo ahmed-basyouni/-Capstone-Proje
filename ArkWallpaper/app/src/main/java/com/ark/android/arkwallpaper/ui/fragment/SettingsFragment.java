@@ -50,7 +50,8 @@ import butterknife.ButterKnife;
  * Created by ahmed-basyouni on 4/22/17.
  */
 
-public class SettingsFragment extends BaseFragment  implements SharedPreferences.OnSharedPreferenceChangeListener, CompoundButton.OnCheckedChangeListener, RadioGroup.OnCheckedChangeListener, View.OnClickListener {
+public class SettingsFragment extends BaseFragment  implements SharedPreferences.OnSharedPreferenceChangeListener
+        , CompoundButton.OnCheckedChangeListener, RadioGroup.OnCheckedChangeListener, View.OnClickListener {
 
     @BindView(R.id.displayModeFill)
     RadioButton displayModeFill;

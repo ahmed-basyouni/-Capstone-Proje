@@ -39,7 +39,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class TumblrDownloader {
 
-    public static final int DOWNLOAD_LIMIT = 2;
+    public static final int DOWNLOAD_LIMIT = 5;
 
     public static List<TumblrService.Post> getTumblrPhotos(final String albumName, final int offset) {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
@@ -56,7 +56,7 @@ public class TumblrDownloader {
                                 .addPathSegment("photo")
                                 .addQueryParameter("api_key", "fuiKNFp9vQFvjLNvx4sUwti4Yb5yGutBN4Xh10LXZhhRKjWlV4")
                                 .addQueryParameter("offset", String.valueOf(offset))
-                                .addQueryParameter("limit", "2").build();
+                                .addQueryParameter("limit", String.valueOf(DOWNLOAD_LIMIT)).build();
                         request = request.newBuilder().url(url).build();
                         return chain.proceed(request);
                     }

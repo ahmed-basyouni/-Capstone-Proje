@@ -1,11 +1,15 @@
 package com.ark.android.arkwallpaper.ui.activity;
 
+import android.appwidget.AppWidgetManager;
+import android.appwidget.AppWidgetProviderInfo;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -20,6 +24,7 @@ import com.ark.android.arkwallpaper.R;
 import com.ark.android.arkwallpaper.WallpaperApp;
 import com.ark.android.arkwallpaper.utils.WidgetUtils;
 import com.ark.android.arkwallpaper.widget.WallpaperWidget;
+import com.ark.android.arkwallpaper.widget.WidgetService;
 import com.ark.android.gallerylib.data.GallaryDataBaseContract;
 
 import java.util.ArrayList;
@@ -27,6 +32,9 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static android.appwidget.AppWidgetManager.EXTRA_APPWIDGET_ID;
+import static android.appwidget.AppWidgetManager.INVALID_APPWIDGET_ID;
 
 public class WidgetCustomizeActivity extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener, View.OnClickListener , LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemSelectedListener {
 
@@ -42,6 +50,8 @@ public class WidgetCustomizeActivity extends AppCompatActivity implements RadioG
 
     private Constants.CHANGE_MODE change_mode = Constants.CHANGE_MODE.NEXT_WALLPAPER;
     private String albumName;
+    private String prefName;
+    private int mAppWidgetId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,14 +61,32 @@ public class WidgetCustomizeActivity extends AppCompatActivity implements RadioG
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
         ButterKnife.bind(this);
+        setResult(RESULT_CANCELED);
+        showAppWidget();
         customizeOptionsGroup.setOnCheckedChangeListener(this);
         saveBtn.setOnClickListener(this);
         getSupportLoaderManager().initLoader(LOADER_ID, null, this);
     }
 
+    private void showAppWidget() {
+
+        mAppWidgetId = INVALID_APPWIDGET_ID;
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+        if (extras != null) {
+            mAppWidgetId = extras.getInt(EXTRA_APPWIDGET_ID,
+                    INVALID_APPWIDGET_ID);
+            prefName = "Pref" + mAppWidgetId;
+        }
+        if (mAppWidgetId == INVALID_APPWIDGET_ID) {
+            finish();
+        }
+
+    }
+
     private void setupAlbumSpinner(List<String> albums) {
 
-        String albumName = WidgetUtils.getSelectedAlbum(getIntent().getExtras().getString(WallpaperWidget.PREFERENCE_NAME));
+        String albumName = WidgetUtils.getSelectedAlbum(prefName);
 
         if(albumName != null){
             int index = albums.indexOf(albumName);
@@ -92,12 +120,19 @@ public class WidgetCustomizeActivity extends AppCompatActivity implements RadioG
 
     @Override
     public void onClick(View v) {
-        WidgetUtils.setChangeMode(change_mode, getIntent().getExtras().getString(WallpaperWidget.PREFERENCE_NAME));
+        WidgetUtils.setChangeMode(change_mode, prefName);
         if(albumSpinner.getVisibility() == View.VISIBLE){
             if(albumName == null)
                 albumName = albumSpinner.getAdapter().getItem(0).toString();
-            WidgetUtils.setSelectedAlbum(albumName, getIntent().getExtras().getString(WallpaperWidget.PREFERENCE_NAME));
+            WidgetUtils.setSelectedAlbum(albumName, prefName);
         }
+        Intent startService = new Intent(WidgetCustomizeActivity.this,
+                WidgetService.class);
+        startService.putExtra(EXTRA_APPWIDGET_ID, mAppWidgetId);
+        setResult(RESULT_OK, startService);
+        startService(startService);
+
+        finish();
     }
 
     @Override

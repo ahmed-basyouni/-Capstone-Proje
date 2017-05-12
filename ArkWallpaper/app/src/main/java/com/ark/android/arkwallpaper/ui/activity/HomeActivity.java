@@ -109,8 +109,17 @@ public class HomeActivity extends BaseActivity implements HomeContract.IHomeView
 
     @Override
     public void setupIndicator() {
-        TypedArray tabsdrawables = getResources().obtainTypedArray(R.array.tabs_drawables);
-        springIndicator.setTabsDrawable(tabsdrawables);
+        List<Integer> images = new ArrayList<Integer>();
+        images.add(R.drawable.ic_compare_arrows_white_24dp);
+        images.add(R.drawable.ic_photo_album_white_24dp);
+        images.add(R.drawable.ic_settings_white_24dp);
+
+        List<String> buttonsDescriptions = new ArrayList<>();
+        buttonsDescriptions.add(getString(R.string.change));
+        buttonsDescriptions.add(getString(R.string.albums));
+        buttonsDescriptions.add(getString(R.string.settings));
+        springIndicator.setButtonsDesc(buttonsDescriptions);
+        springIndicator.setTabsDrawable(images);
         springIndicator.setViewPager(viewPager);
     }
 

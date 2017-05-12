@@ -9,6 +9,7 @@
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:contentDescription="@string/albumsList"
         android:id="@+id/albumsList"/>
 
     <LinearLayout
@@ -37,9 +38,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="false"
-        android:src="@drawable/ic_folder_white_24dp"
+        android:contentDescription="@string/addTumblrAlbum"
+        android:src="@drawable/tumblr_floating"
         android:visibility="invisible"
-        app:backgroundTint="@color/floatingFolderColor"
+        app:backgroundTint="@color/tumblr_color"
         app:elevation="6dp"
         app:pressedTranslationZ="12dp" />
 
@@ -72,9 +74,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="false"
-            android:src="@drawable/ic_folder_white_24dp"
+            android:contentDescription="@string/addfivePxAlbum"
+            android:src="@drawable/five_floating"
             android:visibility="invisible"
-            app:backgroundTint="@color/floatingFolderColor"
+            app:backgroundTint="@color/five_color"
             app:elevation="6dp"
             app:pressedTranslationZ="12dp" />
 
@@ -106,6 +109,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="false"
+            android:contentDescription="@string/addAlbum"
             android:src="@drawable/ic_insert_photo_white_24dp"
             android:visibility="invisible"
             app:backgroundTint="@color/floatingImageColor"
@@ -120,6 +124,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
+        android:contentDescription="@string/openAddAlbumMenu"
         android:src="@drawable/ic_add_white_24dp"
         app:backgroundTint="@color/colorAccent"
         app:elevation="6dp"

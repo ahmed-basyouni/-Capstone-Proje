@@ -17,7 +17,8 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.activity.SplashActivity">
+        <activity android:name=".ui.activity.SplashActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -27,14 +28,18 @@
         <activity
             android:name=".ui.activity.HomeActivity"
             android:excludeFromRecents="true"
+            android:screenOrientation="portrait"
             android:exported="true" />
-        <activity android:name=".ui.activity.AlbumActivity" />
+        <activity android:name=".ui.activity.AlbumActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.activity.LastImageInfoActivity"
-            android:theme="@style/TransActivity" />
+            android:theme="@style/TransActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.activity.CustomizeWallpaperActivity"
-            android:theme="@style/TransActivity" />
+            android:theme="@style/TransActivity"
+            android:screenOrientation="portrait"/>
 
         <service android:name=".WallpaperObserverService" />
         <service
@@ -60,7 +65,7 @@
         <receiver
             android:name=".widget.WallpaperWidget"
             android:icon="@drawable/ic_refresh_white_24dp"
-            android:label="StockHawk Widget">
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -73,10 +78,11 @@
         <service android:name=".widget.WidgetService" />
 
         <activity android:name=".ui.activity.WidgetCustomizeActivity"
-            android:theme="@style/Theme.AppCompat.Light.Dialog">
+            android:theme="@style/Theme.AppCompat.Light.Dialog"
+            android:exported="false"
+            android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="com.ark.android.arkwallpaper.widgetAction" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
             </intent-filter>
         </activity>
     </application>

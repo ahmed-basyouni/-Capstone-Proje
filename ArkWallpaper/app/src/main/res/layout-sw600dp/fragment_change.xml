@@ -78,6 +78,7 @@
                     android:inputType="number"
                     android:textSize="@dimen/textSizeMedium"
                     android:text="@string/defaultChangeValue"
+                    android:contentDescription="@string/changeInterval"
                     android:textColor="@color/text_secondary"
                     tools:text="30" />
 
