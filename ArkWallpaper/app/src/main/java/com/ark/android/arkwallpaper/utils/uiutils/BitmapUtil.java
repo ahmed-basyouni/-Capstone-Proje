@@ -27,6 +27,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.ark.android.arkanalytics.GATrackerManager;
+import com.crashlytics.android.Crashlytics;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -254,6 +255,7 @@ public class BitmapUtil {
             return null;
         } catch (FileNotFoundException e) {
             GATrackerManager.getInstance().trackException(e);
+            Crashlytics.logException(e);
             e.printStackTrace();
             return null;
         }

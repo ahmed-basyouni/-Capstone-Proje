@@ -17,6 +17,7 @@
 package com.ark.android.onlinesourcelib.downloader;
 
 import com.ark.android.arkanalytics.GATrackerManager;
+import com.crashlytics.android.Crashlytics;
 
 import java.io.IOException;
 import java.util.List;
@@ -69,6 +70,7 @@ public class FiveHundredPxDownloader {
             response = service.get500xPhotos().execute().body();
         } catch (IOException e) {
             GATrackerManager.getInstance().trackException(e);
+            Crashlytics.logException(e);
             e.printStackTrace();
             return null;
         }

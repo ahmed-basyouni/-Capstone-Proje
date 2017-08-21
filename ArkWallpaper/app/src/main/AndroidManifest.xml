@@ -85,6 +85,12 @@
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
             </intent-filter>
         </activity>
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="a80003d01b71f7b63faf0bc1e393c0ec89d7ef21"
+            />
+
     </application>
 
 </manifest>

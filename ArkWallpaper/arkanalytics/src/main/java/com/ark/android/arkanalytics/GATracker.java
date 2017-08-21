@@ -2,10 +2,12 @@ package com.ark.android.arkanalytics;
 
 import android.content.Context;
 
+import com.google.android.gms.analytics.ExceptionReporter;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 
 /**
+ * 
  * Created by ahmed-basyouni on 5/8/17.
  */
 
@@ -21,6 +23,9 @@ public class GATracker {
 
         sInstance = new GATracker(context);
         mTracker = GoogleAnalytics.getInstance(context).newTracker(R.xml.app_tracker);
+        ExceptionReporter reporter = new ExceptionReporter(mTracker, Thread.getDefaultUncaughtExceptionHandler(), context);
+        reporter.setExceptionParser(new AnalyticsExceptionParser(context, null));
+        Thread.setDefaultUncaughtExceptionHandler(reporter);
         mTracker.enableExceptionReporting(true);
     }
 

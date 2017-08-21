@@ -21,6 +21,7 @@ import com.ark.android.gallerylib.data.GallaryDataBaseContract;
 import com.ark.android.onlinesourcelib.manager.TumblrManager;
 import com.ark.android.onlinesourcelib.downloader.TumblrDownloader;
 import com.ark.android.onlinesourcelib.downloader.TumblrService;
+import com.crashlytics.android.Crashlytics;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -76,6 +77,7 @@ public class TumblrSyncAdapter extends AbstractThreadedSyncAdapter {
                     TumblrManager.getInstance().setOffset(getContext());
                 } catch (RemoteException | OperationApplicationException e) {
                     GATrackerManager.getInstance().trackException(e);
+                    Crashlytics.logException(e);
                     e.printStackTrace();
                 }
             }
@@ -110,6 +112,7 @@ public class TumblrSyncAdapter extends AbstractThreadedSyncAdapter {
         } catch (IOException e) {
             GATrackerManager.getInstance().trackException(e);
             e.printStackTrace();
+            Crashlytics.logException(e);
         }
     }
 
@@ -135,6 +138,7 @@ public class TumblrSyncAdapter extends AbstractThreadedSyncAdapter {
             out.close();
         } catch (Exception e) {
             GATrackerManager.getInstance().trackException(e);
+            Crashlytics.logException(e);
             e.printStackTrace();
             return null;
         }

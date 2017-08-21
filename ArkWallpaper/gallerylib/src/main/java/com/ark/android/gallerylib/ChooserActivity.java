@@ -21,10 +21,12 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 
 import com.ark.android.arkanalytics.GATrackerManager;
 import com.ark.android.gallerylib.data.GallaryDataBaseContract;
 import com.ark.android.gallerylib.util.GallaryUtils;
+import com.crashlytics.android.Crashlytics;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -54,6 +56,7 @@ public class ChooserActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.chosser_activity);
         checkIntent();
         checkPermissions();
     }
@@ -94,7 +97,6 @@ public class ChooserActivity extends AppCompatActivity {
         try {
             startActivityForResult(intent, IMAGE_CHOOSER_REQUEST);
         } catch (ActivityNotFoundException e) {
-            GATrackerManager.getInstance().trackException(e);
             setCancelResult(CancelReason.REASON_IMAGE_ACTIVITY_NOT_FOUND);
         }
     }
@@ -105,7 +107,6 @@ public class ChooserActivity extends AppCompatActivity {
             startActivityForResult(intent, FOLDER_CHOOSER_REQUEST);
             
         }catch (ActivityNotFoundException ex){
-            GATrackerManager.getInstance().trackException(ex);
             setCancelResult(CancelReason.REASON_FOLDER_ACTIVITY_NOT_FOUND);
         }
     }
@@ -136,6 +137,12 @@ public class ChooserActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent result) {
         super.onActivityResult(requestCode, resultCode, result);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                findViewById(R.id.chooser_progress).setVisibility(View.VISIBLE);
+            }
+        });
         Uri parentUri = null;
         if (requestCode != FOLDER_CHOOSER_REQUEST && requestCode != IMAGE_CHOOSER_REQUEST) {
             return;
@@ -188,6 +195,7 @@ public class ChooserActivity extends AppCompatActivity {
                     getContentResolver().applyBatch(GallaryDataBaseContract.GALLERY_AUTHORITY, operations);
                 } catch (RemoteException | OperationApplicationException e) {
                     GATrackerManager.getInstance().trackException(e);
+                    Crashlytics.logException(e);
                     Log.e(TAG, "Error writing uris to ContentProvider", e);
                 }finally {
                     setResult(Activity.RESULT_OK);

@@ -39,6 +39,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.crashlytics.android.Crashlytics;
 
 import java.io.File;
 import java.io.IOException;
@@ -184,6 +185,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder>
                     Toast.makeText(mContext, mContext.getString(R.string.imageSaved), Toast.LENGTH_SHORT).show();
                 } catch (IOException e) {
                     GATrackerManager.getInstance().trackException(e);
+                    Crashlytics.logException(e);
                     e.printStackTrace();
                 }
             }

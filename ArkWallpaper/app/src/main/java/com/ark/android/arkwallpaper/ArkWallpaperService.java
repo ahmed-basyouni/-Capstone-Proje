@@ -28,6 +28,7 @@ import com.ark.android.arkwallpaper.utils.uiutils.BitmapUtil;
 import com.ark.android.arkwallpaper.utils.uiutils.GlideBlurringTransformation;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.BitmapResource;
+import com.crashlytics.android.Crashlytics;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -371,10 +372,10 @@ public class ArkWallpaperService extends WallpaperService {
                 }
             } catch (RuntimeException re) {
                 GATrackerManager.getInstance().trackException(re);
+                Crashlytics.logException(re);
                 holder.unlockCanvasAndPost(c);
                 return;
             } catch (FileNotFoundException e) {
-                GATrackerManager.getInstance().trackException(e);
                 e.printStackTrace();
                 drawNoImagesFound(c);
                 holder.unlockCanvasAndPost(c);

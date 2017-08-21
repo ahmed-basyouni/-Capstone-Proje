@@ -9,7 +9,11 @@ import com.ark.android.arkanalytics.GATracker;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
+
 /**
+ *
  * Created by ahmed-basyouni on 4/23/17.
  */
 
@@ -27,6 +31,7 @@ public class WallpaperApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Fabric.with(this, new Crashlytics());
         instance = this;
         executorService = Executors.newFixedThreadPool(CORE_POOL_SIZE);
         GATracker.initialize(this);

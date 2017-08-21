@@ -27,6 +27,7 @@ import com.ark.android.arkanalytics.GATrackerManager;
 import com.ark.android.arkwallpaper.R;
 import com.ark.android.arkwallpaper.utils.MathUtil;
 import com.ark.android.arkwallpaper.utils.SvgPathParser;
+import com.crashlytics.android.Crashlytics;
 
 import java.text.ParseException;
 
@@ -95,7 +96,7 @@ public class AnimatedSvgView extends View {
         mTraceColors = new int[1];
         mTraceColors[0] = Color.WHITE;
         mTraceResidueColors = new int[1];
-        mTraceResidueColors[0] = Color.WHITE;
+        mTraceResidueColors[0] = Color.argb(50, 255, 255, 255);;
 
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.AnimatedSvgView);
@@ -216,6 +217,7 @@ public class AnimatedSvgView extends View {
                 mGlyphData[i].path = parser.parsePath(mGlyphStrings[i]);
             } catch (ParseException e) {
                 GATrackerManager.getInstance().trackException(e);
+                Crashlytics.logException(e);
                 mGlyphData[i].path = new Path();
                 Log.e(TAG, "Couldn't parse path", e);
             }
@@ -329,19 +331,6 @@ public class AnimatedSvgView extends View {
         public static RatioSizingInfo getRatioSizingInfoFromAttrs(Context context, AttributeSet attrs)
                 throws IllegalArgumentException {
             RatioSizingInfo rsi = new RatioSizingInfo();
-
-//        if (attrs != null) {
-//            TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.AspectRatioLayout);
-//
-//            String ratioString = a.getString(R.styleable.AspectRatioLayout_oakAspectRatio);
-//            try {
-//                rsi = parseRatioSizingInfo(ratioString);
-//            } catch (IllegalArgumentException e) {
-//                throw e;
-//            }
-//
-//            a.recycle();
-//        }
 
             return rsi;
         }

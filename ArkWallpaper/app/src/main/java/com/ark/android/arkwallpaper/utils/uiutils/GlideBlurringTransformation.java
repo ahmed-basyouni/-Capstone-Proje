@@ -18,6 +18,7 @@ import com.bumptech.glide.load.Transformation;
 import com.bumptech.glide.load.engine.Resource;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.BitmapResource;
+import com.crashlytics.android.Crashlytics;
 
 public class GlideBlurringTransformation implements Transformation<Bitmap> {
 
@@ -98,6 +99,7 @@ public class GlideBlurringTransformation implements Transformation<Bitmap> {
                 imageBlurrer.destroy();
             } catch (RSRuntimeException e) {
                 GATrackerManager.getInstance().trackException(e);
+//                Crashlytics.logException(e);
                 bitmap = FastBlur.blur(bitmap, mRadius, true);
             }
         } else {

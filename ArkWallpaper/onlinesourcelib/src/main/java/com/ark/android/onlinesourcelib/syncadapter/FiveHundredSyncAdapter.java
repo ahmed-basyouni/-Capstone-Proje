@@ -19,6 +19,7 @@ import com.ark.android.gallerylib.data.GallaryDataBaseContract;
 import com.ark.android.onlinesourcelib.manager.FivePxManager;
 import com.ark.android.onlinesourcelib.downloader.FiveHundredPxDownloader;
 import com.ark.android.onlinesourcelib.downloader.FiveHundredPxService;
+import com.crashlytics.android.Crashlytics;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -75,6 +76,7 @@ public class FiveHundredSyncAdapter extends AbstractThreadedSyncAdapter {
                     }
                     FivePxManager.getInstance().setOffset(getContext());
                 } catch (RemoteException | OperationApplicationException e) {
+                    Crashlytics.logException(e);
                     GATrackerManager.getInstance().trackException(e);
                     e.printStackTrace();
                 }
@@ -103,6 +105,7 @@ public class FiveHundredSyncAdapter extends AbstractThreadedSyncAdapter {
             }
         } catch (IOException e) {
             GATrackerManager.getInstance().trackException(e);
+            Crashlytics.logException(e);
             e.printStackTrace();
         }
     }
@@ -129,6 +132,7 @@ public class FiveHundredSyncAdapter extends AbstractThreadedSyncAdapter {
             out.close();
         } catch (Exception e) {
             GATrackerManager.getInstance().trackException(e);
+            Crashlytics.logException(e);
             e.printStackTrace();
             return null;
         }

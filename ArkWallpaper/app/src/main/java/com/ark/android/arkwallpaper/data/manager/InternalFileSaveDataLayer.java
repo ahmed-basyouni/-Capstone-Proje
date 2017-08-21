@@ -14,6 +14,7 @@ import android.content.Context;
 import android.os.Parcelable;
 
 import com.ark.android.arkanalytics.GATrackerManager;
+import com.crashlytics.android.Crashlytics;
 
 /**
  * 
@@ -65,6 +66,7 @@ public class InternalFileSaveDataLayer {
 				file = new File(path);
 			} catch (NullPointerException e) {
 				GATrackerManager.getInstance().trackException(e);
+				Crashlytics.logException(e);
 				return false;
 			}
 

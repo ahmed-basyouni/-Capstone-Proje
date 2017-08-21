@@ -3,6 +3,7 @@ package com.ark.android.arkwallpaper.utils;
 import android.os.Environment;
 
 import com.ark.android.arkanalytics.GATrackerManager;
+import com.crashlytics.android.Crashlytics;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -42,6 +43,7 @@ public class IOUtils {
             outChannel = new FileOutputStream(dst).getChannel();
         } catch (FileNotFoundException e) {
             GATrackerManager.getInstance().trackException(e);
+            Crashlytics.logException(e);
             e.printStackTrace();
             return null;
         }
@@ -54,6 +56,7 @@ public class IOUtils {
                     inChannel.close();
                 } catch (IOException ex) {
                     GATrackerManager.getInstance().trackException(ex);
+                    Crashlytics.logException(ex);
                     ex.printStackTrace();
                 }
             if (outChannel != null)
@@ -61,6 +64,7 @@ public class IOUtils {
                     outChannel.close();
                 } catch (IOException ex) {
                     GATrackerManager.getInstance().trackException(ex);
+                    Crashlytics.logException(ex);
                     ex.printStackTrace();
                 }
 
